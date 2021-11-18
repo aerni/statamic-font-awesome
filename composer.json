@@ -1,0 +1,45 @@
+{
+    "name": "aerni/font-awesome",
+    "description": "A Statamic addon to easily add Font Awesome icons.",
+    "keywords": [
+        "statamic",
+        "font-awesome"
+    ],
+    "homepage": "https://github.com/aerni/statamic-font-awesome",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Aerni",
+            "email": "hello@michaelaerni.ch",
+            "homepage": "https://michaelaerni.ch",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "statamic/cms": "~3.2.22"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aerni\\FontAwesome\\": "src"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "statamic": {
+            "name": "Font Awesome",
+            "description": "A Statamic addon to easily add Font Awesome icons."
+        },
+        "laravel": {
+            "providers": [
+                "Aerni\\FontAwesome\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
