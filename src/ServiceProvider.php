@@ -21,6 +21,10 @@ class ServiceProvider extends AddonServiceProvider
 
     public function bootAddon(): void
     {
+        if (app()->runningInConsole()) {
+            return;
+        }
+
         $this->registerExternalScript(FontAwesome::kit()->get('url'));
     }
 }
