@@ -9,6 +9,17 @@ use Illuminate\Support\Facades\Cache;
 
 class FontAwesome
 {
+    protected string $apiToken;
+    protected string $kitToken;
+
+    public function __construct()
+    {
+        $this->apiToken = config('font-awesome.api_token') ?? '';
+        $this->kitToken = config('font-awesome.kit_token') ?? '';
+
+        $this->validateConfig();
+    }
+
     public function all(): Collection
     {
         return $this->icons()->flatten(1)->sortBy('id')->values();
@@ -26,7 +37,9 @@ class FontAwesome
 
     public function kit(string $token = null): Collection
     {
-        $this->kitToken = $token ?? config('font-awesome.kit_token');
+        if ($token) {
+            $this->kitToken = $token;
+        }
 
         return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
             $response = Http::withToken($this->authToken())
@@ -79,7 +92,7 @@ class FontAwesome
             return $token;
         }
 
-        $response = Http::withToken(config('font-awesome.api_token'))
+        $response = Http::withToken($this->apiToken)
             ->post('https://api.fontawesome.com/token')
             ->collect();
 
@@ -114,5 +127,16 @@ class FontAwesome
                     }
                 }
             }';
+    }
+
+    protected function validateConfig(): void
+    {
+        if (empty($this->apiToken)) {
+            throw new \Exception('Please add your Font Awesome API Token to your .env file.');
+        }
+
+        if (empty($this->kitToken)) {
+            throw new \Exception('Please add your Font Awesome Kit Token to your .env file.');
+        }
     }
 }
