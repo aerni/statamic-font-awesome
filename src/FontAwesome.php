@@ -52,6 +52,7 @@ class FontAwesome
                 'url' => "https://kit.fontawesome.com/{$response['token']}.js",
                 'license' => $response['licenseSelected'],
                 'version' => $response['version'],
+                'custom_icons' => $response['iconUploads'],
             ]);
         });
     }
@@ -60,23 +61,41 @@ class FontAwesome
     {
         return Cache::rememberForever('font_awesome::icons', function () {
             $response = Http::post('https://api.fontawesome.com', [
-                'query' => $this->iconsQuery()
-            ])->json()['data']['release']['icons'];
+                    'query' => $this->iconsQuery()
+                ])->json()['data']['release']['icons'];
 
-            return collect($response)->flatMap(function ($icon) {
+            $icons = collect($response)->flatMap(function ($icon) {
                 // The styles available for the license type of the kit.
                 $styles = $icon['membership'][$this->kit()->get('license')];
 
                 return collect($styles)->map(function ($style) use ($icon) {
                     return [
-                        'style' => $style,
-                        'id' => "{$icon['id']}-{$style}",
-                        'label' => $icon['label'] . " ($style)",
-                        'class' => $this->iconClass($icon['id'], $style)
-                    ];
+                            'style' => $style,
+                            'id' => "{$icon['id']}-{$style}",
+                            'label' => $icon['label'] . " ($style)",
+                            'class' => $this->iconClass($icon['id'], $style)
+                            ];
                 })->toArray();
             })->groupBy('style');
+
+            if ($this->customIcons()->isNotEmpty()) {
+                $icons->put('custom', $this->customIcons());
+            }
+
+            return $icons->sort();
         });
+    }
+
+    protected function customIcons(): Collection
+    {
+        return collect($this->kit()->get('custom_icons'))->map(function ($icon) {
+            return [
+                'style' => 'custom',
+                'id' => "{$icon['name']}-custom",
+                'label' => Str::title($icon['name']) . " (custom)",
+                'class' => "fak fa-{$icon['name']}",
+            ];
+        })->sortBy('id');
     }
 
     protected function iconClass(string $icon, string $style): string
@@ -124,6 +143,7 @@ class FontAwesome
                         token
                         licenseSelected
                         version
+                        iconUploads {' . "name" . '}
                     }
                 }
             }';

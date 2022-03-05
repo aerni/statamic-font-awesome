@@ -29,6 +29,12 @@
     </div>
 </template>
 
+<style scoped>
+.fak {
+    font-family: "Font Awesome Kit" !important;
+}
+</style>
+
 <script>
 export default {
     mixins: [Fieldtype],
