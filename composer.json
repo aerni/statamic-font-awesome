@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "statamic/cms": "~3.2.22"
+        "statamic/cms": "~3.2.22 || 3.3.*"
     },
     "autoload": {
         "psr-4": {
