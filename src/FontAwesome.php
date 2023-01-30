@@ -2,10 +2,10 @@
 
 namespace Aerni\FontAwesome;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class FontAwesome
 {
@@ -30,6 +30,11 @@ class FontAwesome
         return $this->icons()->only($style)->flatten(1)->sortBy('id')->values();
     }
 
+    public function icon(string $icon): ?array
+    {
+        return $this->all()->firstWhere('class', $icon);
+    }
+
     public function styles(): Collection
     {
         return $this->icons()->keys();
@@ -44,7 +49,7 @@ class FontAwesome
         return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
             $response = Http::withToken($this->authToken())
                 ->post('https://api.fontawesome.com', [
-                    'query' => $this->kitQuery()
+                    'query' => $this->kitQuery(),
                 ])->json()['data']['me']['kit'];
 
             return collect([
@@ -61,8 +66,8 @@ class FontAwesome
     {
         return Cache::rememberForever('font_awesome::icons', function () {
             $response = Http::post('https://api.fontawesome.com', [
-                    'query' => $this->iconsQuery()
-                ])->json()['data']['release']['icons'];
+                'query' => $this->iconsQuery(),
+            ])->json()['data']['release']['icons'];
 
             $icons = collect($response)->flatMap(function ($icon) {
                 // The styles available for the license type of the kit.
@@ -70,11 +75,11 @@ class FontAwesome
 
                 return collect($styles)->map(function ($style) use ($icon) {
                     return [
-                            'style' => $style,
-                            'id' => "{$icon['id']}-{$style}",
-                            'label' => $icon['label'] . " ($style)",
-                            'class' => $this->iconClass($icon['id'], $style)
-                            ];
+                        'style' => $style,
+                        'id' => "{$icon['id']}-{$style}",
+                        'label' => $icon['label']." ($style)",
+                        'class' => $this->iconClass($icon['id'], $style),
+                    ];
                 })->toArray();
             })->groupBy('style');
 
@@ -92,7 +97,7 @@ class FontAwesome
             return [
                 'style' => 'uploaded',
                 'id' => "{$icon['name']}-uploaded",
-                'label' => Str::title($icon['name']) . " (uploaded)",
+                'label' => Str::title($icon['name']).' (uploaded)',
                 'class' => "fak fa-{$icon['name']}",
             ];
         })->sortBy('id');
@@ -101,7 +106,7 @@ class FontAwesome
     protected function iconClass(string $icon, string $style): string
     {
         return Str::startsWith($this->kit()->get('version'), '5')
-            ? 'fa' . substr($style, 0, 1) . ' fa-' . $icon
+            ? 'fa'.substr($style, 0, 1).' fa-'.$icon
             : "fa-$style fa-$icon";
     }
 
@@ -124,11 +129,11 @@ class FontAwesome
     {
         return
             'query {
-                release (version:' . '"' . $this->kit()->get('version') . '"' . ') {
+                release (version:'.'"'.$this->kit()->get('version').'"'.') {
                     icons {
                         label
                         id
-                        membership {' . $this->kit()->get('license') . '}
+                        membership {'.$this->kit()->get('license').'}
                     }
                 }
             }';
@@ -139,11 +144,11 @@ class FontAwesome
         return
             'query {
                 me {
-                    kit (token:' . '"' . $this->kitToken . '"' . ') {
+                    kit (token:'.'"'.$this->kitToken.'"'.') {
                         token
                         licenseSelected
                         version
-                        iconUploads {' . "name" . '}
+                        iconUploads {'.'name'.'}
                     }
                 }
             }';

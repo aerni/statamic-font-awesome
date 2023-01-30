@@ -15,6 +15,10 @@ class ServiceProvider extends AddonServiceProvider
         FontAwesomeTags::class,
     ];
 
+    protected $routes = [
+        'actions' => __DIR__.'/../routes/actions.php',
+    ];
+
     protected $scripts = [
         __DIR__.'/../resources/dist/js/cp.js',
     ];

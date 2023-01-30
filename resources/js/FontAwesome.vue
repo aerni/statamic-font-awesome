@@ -43,8 +43,14 @@ export default {
         return {
             observer: new IntersectionObserver(this.infiniteScroll),
             limit: 20,
+            icons: [],
             search: '',
         }
+    },
+
+    mounted() {
+        this.icons.push(this.value)
+        this.loadIcons() // TODO: Icons will still be loaded for each field. We should use Vuex store.
     },
 
     computed: {
@@ -53,7 +59,7 @@ export default {
         },
 
         filtered() {
-            return this.meta.icons.filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
+            return this.icons.filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
         },
 
         paginated() {
@@ -75,6 +81,20 @@ export default {
 
         onClose() {
             this.observer.disconnect()
+        },
+
+        loadIcons() {
+            this.$axios.post('/!/font-awesome/icons', {
+                styles: this.meta.styles,
+            })
+            .then(response => {
+                _.each(response.data, (icon) => {
+                    this.icons.push(icon);
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
 
         async infiniteScroll([{ isIntersecting, target }]) {
