@@ -57,7 +57,9 @@ export default {
         },
 
         filtered() {
-            return this.icons.filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
+            return this.icons
+                .filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
+                .filter((icon) => this.meta.styles.includes(icon.style))
         },
 
         paginated() {

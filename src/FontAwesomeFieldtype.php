@@ -29,7 +29,7 @@ class FontAwesomeFieldtype extends Fieldtype
     public function preload(): array
     {
         return [
-            'styles' => $this->config('styles'),
+            'styles' => $this->config('styles') ?? FontAwesome::styles(),
             'license' => FontAwesome::kit()->get('license'),
             'version' => FontAwesome::kit()->get('version'),
         ];
