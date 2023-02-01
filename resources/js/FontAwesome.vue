@@ -1,5 +1,5 @@
 <template>
-    <div :class="this.classes">
+    <div :class="this.classes" v-if="icons">
         <v-select
             ref="input"
             :name="name"
@@ -23,7 +23,7 @@
             </template>
 
             <template #list-footer>
-                <span v-show="hasNextPage" ref="load" />
+                <span class="chrome-fix" v-show="hasNextPage" ref="load" />
             </template>
         </v-select>
     </div>
@@ -48,12 +48,18 @@ export default {
     },
 
     computed: {
+        icons() {
+            return this.$store.state.publish.fontAwesome.icons
+        },
+
         classes() {
             return `font-awesome ${this.meta.license} version-${this.meta.version.charAt(0)}`
         },
 
         filtered() {
-            return this.meta.icons.filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
+            return this.icons
+                .filter((icon) => icon.label.toLowerCase().includes(this.search.toLowerCase()))
+                .filter((icon) => this.meta.styles.includes(icon.style))
         },
 
         paginated() {
@@ -134,6 +140,11 @@ export default {
 
     .font-awesome.version-6 .fa-brands {
         font-family: "Font Awesome 6 Brands" !important;
+    }
+
+    .chrome-fix {
+        display: inline-block;
+        height: 1px;
     }
 
 </style>

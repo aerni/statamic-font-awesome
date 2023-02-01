@@ -2,8 +2,8 @@
 
 namespace Aerni\FontAwesome;
 
-use Statamic\Fields\Fieldtype;
 use Facades\Aerni\FontAwesome\FontAwesome;
+use Statamic\Fields\Fieldtype;
 
 class FontAwesomeFieldtype extends Fieldtype
 {
@@ -28,12 +28,8 @@ class FontAwesomeFieldtype extends Fieldtype
 
     public function preload(): array
     {
-        $icons = $this->config('styles')
-            ? FontAwesome::get($this->config('styles'))
-            : FontAwesome::all();
-
         return [
-            'icons' => $icons,
+            'styles' => $this->config('styles') ?? FontAwesome::styles(),
             'license' => FontAwesome::kit()->get('license'),
             'version' => FontAwesome::kit()->get('version'),
         ];
@@ -41,9 +37,7 @@ class FontAwesomeFieldtype extends Fieldtype
 
     public function preProcess($data): ?array
     {
-        return $this->preload()['icons']->first(function ($icon) use ($data) {
-            return $icon['class'] === $data;
-        });
+        return $data ? FontAwesome::icon($data) : null;
     }
 
     public function process($data): ?string
