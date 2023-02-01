@@ -25,11 +25,6 @@ class FontAwesome
         return $this->icons()->flatten(1)->sortBy('id')->values();
     }
 
-    public function get(string|array $style): Collection
-    {
-        return $this->icons()->only($style)->flatten(1)->sortBy('id')->values();
-    }
-
     public function icon(string $icon): ?array
     {
         return $this->all()->firstWhere('class', $icon);
