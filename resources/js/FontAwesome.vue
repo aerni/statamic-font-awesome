@@ -1,5 +1,5 @@
 <template>
-    <div :class="this.classes">
+    <div :class="this.classes" v-if="icons">
         <v-select
             ref="input"
             :name="name"
@@ -43,17 +43,15 @@ export default {
         return {
             observer: new IntersectionObserver(this.infiniteScroll),
             limit: 20,
-            icons: [],
             search: '',
         }
     },
 
-    mounted() {
-        this.icons.push(this.value)
-        this.loadIcons() // TODO: Icons will still be loaded for each field. We should use Vuex store.
-    },
-
     computed: {
+        icons() {
+            return this.$store.state.publish.fontAwesome.icons
+        },
+
         classes() {
             return `font-awesome ${this.meta.license} version-${this.meta.version.charAt(0)}`
         },
@@ -81,20 +79,6 @@ export default {
 
         onClose() {
             this.observer.disconnect()
-        },
-
-        loadIcons() {
-            this.$axios.post('/!/font-awesome/icons', {
-                styles: this.meta.styles,
-            })
-            .then(response => {
-                _.each(response.data, (icon) => {
-                    this.icons.push(icon);
-                });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
         },
 
         async infiniteScroll([{ isIntersecting, target }]) {

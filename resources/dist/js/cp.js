@@ -86,15 +86,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       observer: new IntersectionObserver(this.infiniteScroll),
       limit: 20,
-      icons: [],
       search: ''
     };
   },
-  mounted: function mounted() {
-    this.icons.push(this.value);
-    this.loadIcons(); // TODO: Icons will still be loaded for each field. We should use Vuex store.
-  },
   computed: {
+    icons: function icons() {
+      return this.$store.state.publish.fontAwesome.icons;
+    },
     classes: function classes() {
       return "font-awesome ".concat(this.meta.license, " version-").concat(this.meta.version.charAt(0));
     },
@@ -143,21 +141,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     onClose: function onClose() {
       this.observer.disconnect();
     },
-    loadIcons: function loadIcons() {
-      var _this3 = this;
-
-      this.$axios.post('/!/font-awesome/icons', {
-        styles: this.meta.styles
-      }).then(function (response) {
-        _.each(response.data, function (icon) {
-          _this3.icons.push(icon);
-        });
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
     infiniteScroll: function infiniteScroll(_ref) {
-      var _this4 = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var _ref2, _ref2$, isIntersecting, target, ul, scrollTop;
@@ -175,9 +160,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 ul = target.offsetParent;
                 scrollTop = target.offsetParent.scrollTop;
-                _this4.limit += 20;
+                _this3.limit += 20;
                 _context2.next = 7;
-                return _this4.$nextTick();
+                return _this3.$nextTick();
 
               case 7:
                 ul.scrollTop = scrollTop;
@@ -189,6 +174,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee2);
       }))();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store.js":
+/*!*******************************!*\
+  !*** ./resources/js/store.js ***!
+  \*******************************/
+/***/ (() => {
+
+Statamic.$store.registerModule(['publish', 'fontAwesome'], {
+  namespaced: true,
+  state: {
+    icons: null
+  },
+  getters: {
+    icons: function icons(state) {
+      return state.icons;
+    }
+  },
+  actions: {
+    fetchIcons: function fetchIcons(_ref) {
+      var commit = _ref.commit;
+      return Statamic.$request.post("/!/font-awesome/icons").then(function (response) {
+        return commit('setIcons', response.data);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    }
+  },
+  mutations: {
+    setIcons: function setIcons(state, icons) {
+      state.icons = icons;
     }
   }
 });
@@ -236,7 +256,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* This fixes an issue with Duotone icons being displayed wrong */\n.font-awesome[data-v-38412be6] {\n    letter-spacing: initial;\n}\n.font-awesome.free.version-5 .fas[data-v-38412be6],\n.font-awesome.free.version-5 .far[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Free\" !important;\n}\n.font-awesome.pro.version-5 .fas[data-v-38412be6],\n.font-awesome.pro.version-5 .far[data-v-38412be6],\n.font-awesome.pro.version-5 .fal[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Pro\" !important;\n}\n.font-awesome.version-5 .fad[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Duotone\" !important;\n}\n.font-awesome.version-5 .fab[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Brands\" !important;\n}\n.font-awesome.free.version-6 .fa-solid[data-v-38412be6],\n.font-awesome.free.version-6 .fa-regular[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Free\" !important;\n}\n.font-awesome.pro.version-6 .fa-solid[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-regular[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-light[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-thin[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Pro\" !important;\n}\n.font-awesome.version-6 .fa-duotone[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Duotone\" !important;\n}\n.font-awesome.version-6 .fa-brands[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Brands\" !important;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* This fixes an issue with Duotone icons being displayed wrong */\n.font-awesome[data-v-38412be6] {\n    letter-spacing: initial;\n}\n.font-awesome.free.version-5 .fas[data-v-38412be6],\n.font-awesome.free.version-5 .far[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Free\" !important;\n}\n.font-awesome.pro.version-5 .fas[data-v-38412be6],\n.font-awesome.pro.version-5 .far[data-v-38412be6],\n.font-awesome.pro.version-5 .fal[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Pro\" !important;\n}\n.font-awesome.version-5 .fad[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Duotone\" !important;\n}\n.font-awesome.version-5 .fab[data-v-38412be6] {\n    font-family: \"Font Awesome 5 Brands\" !important;\n}\n.font-awesome.free.version-6 .fa-solid[data-v-38412be6],\n.font-awesome.free.version-6 .fa-regular[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Free\" !important;\n}\n.font-awesome.pro.version-6 .fa-solid[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-regular[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-light[data-v-38412be6],\n.font-awesome.pro.version-6 .fa-thin[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Pro\" !important;\n}\n.font-awesome.version-6 .fa-duotone[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Duotone\" !important;\n}\n.font-awesome.version-6 .fa-brands[data-v-38412be6] {\n    font-family: \"Font Awesome 6 Brands\" !important;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1540,78 +1560,89 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { class: this.classes },
-    [
-      _c("v-select", {
-        ref: "input",
-        attrs: {
-          name: _vm.name,
-          disabled: _vm.isReadOnly,
-          options: _vm.paginated,
-          filterable: false,
-          value: _vm.value,
-        },
-        on: {
-          input: _vm.update,
-          open: _vm.onOpen,
-          close: _vm.onClose,
-          search: function (query) {
-            return (_vm.search = query)
-          },
-        },
-        scopedSlots: _vm._u([
-          {
-            key: "option",
-            fn: function (icon) {
-              return [
-                _c("i", {
-                  staticClass: "inline-block w-4 mr-sm",
-                  class: icon.class,
-                }),
-                _vm._v(" "),
-                _c("span", { domProps: { textContent: _vm._s(icon.label) } }),
-              ]
+  return _vm.icons
+    ? _c(
+        "div",
+        { class: this.classes },
+        [
+          _c("v-select", {
+            ref: "input",
+            attrs: {
+              name: _vm.name,
+              disabled: _vm.isReadOnly,
+              options: _vm.paginated,
+              filterable: false,
+              value: _vm.value,
             },
-          },
-          {
-            key: "selected-option",
-            fn: function (icon) {
-              return [
-                _c("i", {
-                  staticClass: "inline-block w-4 mr-sm",
-                  class: icon.class,
-                }),
-                _vm._v(" "),
-                _c("span", { domProps: { textContent: _vm._s(icon.label) } }),
-              ]
+            on: {
+              input: _vm.update,
+              open: _vm.onOpen,
+              close: _vm.onClose,
+              search: function (query) {
+                return (_vm.search = query)
+              },
             },
-          },
-          {
-            key: "list-footer",
-            fn: function () {
-              return [
-                _c("span", {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: _vm.hasNextPage,
-                      expression: "hasNextPage",
-                    },
-                  ],
-                  ref: "load",
-                }),
-              ]
-            },
-            proxy: true,
-          },
-        ]),
-      }),
-    ],
-    1
-  )
+            scopedSlots: _vm._u(
+              [
+                {
+                  key: "option",
+                  fn: function (icon) {
+                    return [
+                      _c("i", {
+                        staticClass: "inline-block w-4 mr-sm",
+                        class: icon.class,
+                      }),
+                      _vm._v(" "),
+                      _c("span", {
+                        domProps: { textContent: _vm._s(icon.label) },
+                      }),
+                    ]
+                  },
+                },
+                {
+                  key: "selected-option",
+                  fn: function (icon) {
+                    return [
+                      _c("i", {
+                        staticClass: "inline-block w-4 mr-sm",
+                        class: icon.class,
+                      }),
+                      _vm._v(" "),
+                      _c("span", {
+                        domProps: { textContent: _vm._s(icon.label) },
+                      }),
+                    ]
+                  },
+                },
+                {
+                  key: "list-footer",
+                  fn: function () {
+                    return [
+                      _c("span", {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.hasNextPage,
+                            expression: "hasNextPage",
+                          },
+                        ],
+                        ref: "load",
+                      }),
+                    ]
+                  },
+                  proxy: true,
+                },
+              ],
+              null,
+              false,
+              614546484
+            ),
+          }),
+        ],
+        1
+      )
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -1809,9 +1840,15 @@ var __webpack_exports__ = {};
   !*** ./resources/js/cp.js ***!
   \****************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _FontAwesome_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FontAwesome.vue */ "./resources/js/FontAwesome.vue");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_store__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _FontAwesome_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FontAwesome.vue */ "./resources/js/FontAwesome.vue");
 
-Statamic.$components.register('font_awesome-fieldtype', _FontAwesome_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+Statamic.$components.register('font_awesome-fieldtype', _FontAwesome_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
+Statamic.booted(function () {
+  Statamic.$store.dispatch("publish/fontAwesome/fetchIcons");
+});
 })();
 
 /******/ })()
