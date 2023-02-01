@@ -23,7 +23,7 @@
             </template>
 
             <template #list-footer>
-                <span v-show="hasNextPage" ref="load" />
+                <span class="chrome-fix" v-show="hasNextPage" ref="load" />
             </template>
         </v-select>
     </div>
@@ -140,6 +140,11 @@ export default {
 
     .font-awesome.version-6 .fa-brands {
         font-family: "Font Awesome 6 Brands" !important;
+    }
+
+    .chrome-fix {
+        display: inline-block;
+        height: 1px;
     }
 
 </style>
