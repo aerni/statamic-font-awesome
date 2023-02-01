@@ -69,8 +69,6 @@ FA_KIT_TOKEN=************************************
 
 Add the `Font Awesome` Fieldtype to a Blueprint or Fieldset. The Fieldtype provides the option to only make certain icon styles available for selection.
 
-> **Note:** If you are using a Font Awesome Kit with `SVG` as technology, you may run into performance issues when selecting icons. Change the technology to `Web Font` to speed things up.
-
 ### Template
 
 Add the following Tag to the `<head>` of your layout view to render the Font Awesome script.
@@ -79,7 +77,7 @@ Add the following Tag to the `<head>` of your layout view to render the Font Awe
 {{ font_awesome:kit }}
 ```
 
-You may use a different Kit in your template using the `token` parameter. This comes in handy if you want to use an `SVG` Kit in your template but are using a `Web Font` Kit for your Fieldtype due to performance issues.
+You may use a different Kit in your template using the `token` parameter.
 
 ```html
 {{ font_awesome:kit token="f481b75381" }}
