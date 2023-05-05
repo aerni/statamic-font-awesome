@@ -18,7 +18,7 @@ class FontAwesomeTags extends Tags
     {
         $kitUrl = FontAwesome::kit($this->params->get('token'))->get('url');
 
-        return "<script src='$kitUrl' crossorigin='anonymous'></script>";
+        return "<script defer src='$kitUrl' crossorigin='anonymous'></script>";
     }
 
     protected function output($icon): string
