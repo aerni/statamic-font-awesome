@@ -4,6 +4,7 @@ namespace Aerni\FontAwesome;
 
 use Facades\Aerni\FontAwesome\FontAwesome;
 use Statamic\Fields\Fieldtype;
+use Illuminate\Support\Str;
 
 class FontAwesomeFieldtype extends Fieldtype
 {
@@ -20,7 +21,7 @@ class FontAwesomeFieldtype extends Fieldtype
                 'type' => 'select',
                 'multiple' => 'true',
                 'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
-                    return [$style => __(ucfirst($style))];
+                    return [$style => __(Str::of($style)->replace('-', ' ')->title()->toString())];
                 }),
             ],
         ];
