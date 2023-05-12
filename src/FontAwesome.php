@@ -52,7 +52,7 @@ class FontAwesome
                 'url' => "https://kit.fontawesome.com/{$response['token']}.js",
                 'license' => $response['licenseSelected'],
                 'version' => $response['version'],
-                'uploaded_icons' => $response['iconUploads'],
+                'customIcons' => $response['iconUploads'],
             ]);
         });
     }
@@ -76,21 +76,21 @@ class FontAwesome
                 ])->toArray();
             })->groupBy('style');
 
-            if ($this->uploadedIcons()->isNotEmpty()) {
-                $icons->put('uploaded', $this->uploadedIcons());
+            if ($this->customIcons()->isNotEmpty()) {
+                $icons->put('custom', $this->customIcons());
             }
 
             return $icons->sortKeys();
         });
     }
 
-    protected function uploadedIcons(): Collection
+    protected function customIcons(): Collection
     {
-        return collect($this->kit()->get('uploaded_icons'))->map(function ($icon) {
+        return collect($this->kit()->get('customIcons'))->map(function ($icon) {
             return [
-                'style' => 'uploaded',
-                'id' => "uploaded-{$icon['name']}",
-                'label' => Str::title($icon['name']).' (uploaded)',
+                'style' => 'custom',
+                'id' => "custom-{$icon['name']}",
+                'label' => Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
                 'class' => "fak fa-{$icon['name']}",
             ];
         })->sortBy('id');
