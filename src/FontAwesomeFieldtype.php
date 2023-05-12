@@ -31,8 +31,6 @@ class FontAwesomeFieldtype extends Fieldtype
     {
         return [
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
-            'license' => FontAwesome::kit()->get('license'),
-            'version' => FontAwesome::kit()->get('version'),
         ];
     }
 
