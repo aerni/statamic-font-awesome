@@ -15,14 +15,19 @@ class FontAwesomeFieldtype extends Fieldtype
     protected function configFieldItems(): array
     {
         return [
-            'styles' => [
-                'display' => 'Styles',
-                'instructions' => 'Only show icons of the selected styles. Leave empty to show all icons.',
-                'type' => 'select',
-                'multiple' => 'true',
-                'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
-                    return [$style => __(Str::of($style)->replace('-', ' ')->title()->toString())];
-                }),
+            [
+                'display' => __('Selection'),
+                'fields' => [
+                    'styles' => [
+                        'display' => __('Styles'),
+                        'instructions' => 'Only show icons of the selected styles. Leave empty to show all icons.',
+                        'type' => 'select',
+                        'multiple' => 'true',
+                        'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
+                            return [$style => __(Str::of($style)->replace('-', ' ')->title()->toString())];
+                        }),
+                    ],
+                ],
             ],
         ];
     }
