@@ -3,14 +3,14 @@
 namespace Aerni\FontAwesome;
 
 use Facades\Aerni\FontAwesome\FontAwesome;
-use Statamic\Fields\Fieldtype;
 use Illuminate\Support\Str;
+use Statamic\Fields\Fieldtype;
 
 class FontAwesomeFieldtype extends Fieldtype
 {
     protected static $handle = 'font_awesome';
-
-    protected $icon = 'select';
+    protected $categories = ['media'];
+    protected $icon = 'icon_picker';
 
     protected function configFieldItems(): array
     {
