@@ -56,6 +56,10 @@ export default {
         }
     },
 
+    mounted() {
+        this.loadFontAwesomeScript();
+    },
+
     computed: {
         icons() {
             return this.$store.state.publish.fontAwesome.icons
@@ -77,6 +81,14 @@ export default {
 
         selectedOption() {
             return this.icons.find(icon => icon.class === this.value);
+        },
+
+        fontAwesomeScriptIsLoaded() {
+            let scripts = Array.from(document.getElementsByTagName("script"))
+                .filter(script => script.src === this.meta.script)
+                .length
+
+            return scripts ? true : false;
         }
     },
 
@@ -130,6 +142,14 @@ export default {
                 });
             });
         },
+
+        loadFontAwesomeScript() {
+            if (! this.fontAwesomeScriptIsLoaded) {
+                let externalScript = document.createElement('script')
+                externalScript.setAttribute('src', this.meta.script)
+                document.head.appendChild(externalScript)
+            }
+        }
     },
 }
 </script>

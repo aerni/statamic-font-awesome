@@ -36,6 +36,7 @@ class FontAwesomeFieldtype extends Fieldtype
     {
         return [
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
+            'script' => FontAwesome::kit()->get('url'),
         ];
     }
 }
