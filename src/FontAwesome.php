@@ -22,7 +22,7 @@ class FontAwesome
 
     public function all(): Collection
     {
-        return $this->icons()->flatten(1)->sortBy('id')->values();
+        return $this->icons()->flatten(1)->sortBy('label')->values();
     }
 
     public function icon(string $icon): ?array
@@ -71,7 +71,7 @@ class FontAwesome
                 return collect($familyStyles)->map(fn ($familyStyle) => [
                     'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
                     'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
-                    'label' => "{$icon['label']}"." (".Str::title("{$familyStyle['family']} {$familyStyle['style']}").")",
+                    'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
                     'class' => $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
                 ])->toArray();
             })->groupBy('style');
