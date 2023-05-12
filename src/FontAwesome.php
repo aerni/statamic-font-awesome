@@ -22,7 +22,7 @@ class FontAwesome
 
     public function all(): Collection
     {
-        return $this->icons()->flatten(1)->sortBy('id')->values();
+        return $this->icons()->flatten(1)->sortBy('label')->values();
     }
 
     public function icon(string $icon): ?array
@@ -52,7 +52,7 @@ class FontAwesome
                 'url' => "https://kit.fontawesome.com/{$response['token']}.js",
                 'license' => $response['licenseSelected'],
                 'version' => $response['version'],
-                'uploaded_icons' => $response['iconUploads'],
+                'customIcons' => $response['iconUploads'],
             ]);
         });
     }
@@ -66,43 +66,50 @@ class FontAwesome
 
             $icons = collect($response)->flatMap(function ($icon) {
                 // The styles available for the license type of the kit.
-                $styles = $icon['membership'][$this->kit()->get('license')];
+                $familyStyles = $icon['familyStylesByLicense'][$this->kit()->get('license')];
 
-                return collect($styles)->map(function ($style) use ($icon) {
-                    return [
-                        'style' => $style,
-                        'id' => "{$icon['id']}-{$style}",
-                        'label' => $icon['label']." ($style)",
-                        'class' => $this->iconClass($icon['id'], $style),
-                    ];
-                })->toArray();
+                return collect($familyStyles)->map(fn ($familyStyle) => [
+                    'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
+                    'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
+                    'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
+                    'class' => $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
+                ])->toArray();
             })->groupBy('style');
 
-            if ($this->uploadedIcons()->isNotEmpty()) {
-                $icons->put('uploaded', $this->uploadedIcons());
+            if ($this->customIcons()->isNotEmpty()) {
+                $icons->put('custom', $this->customIcons());
             }
 
             return $icons->sortKeys();
         });
     }
 
-    protected function uploadedIcons(): Collection
+    protected function customIcons(): Collection
     {
-        return collect($this->kit()->get('uploaded_icons'))->map(function ($icon) {
+        return collect($this->kit()->get('customIcons'))->map(function ($icon) {
             return [
-                'style' => 'uploaded',
-                'id' => "{$icon['name']}-uploaded",
-                'label' => Str::title($icon['name']).' (uploaded)',
+                'style' => 'custom',
+                'id' => "custom-{$icon['name']}",
+                'label' => Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
                 'class' => "fak fa-{$icon['name']}",
             ];
         })->sortBy('id');
     }
 
-    protected function iconClass(string $icon, string $style): string
+    protected function iconClass(string $icon, string $style, string $family): string
     {
-        return Str::startsWith($this->kit()->get('version'), '5')
-            ? 'fa'.substr($style, 0, 1).' fa-'.$icon
-            : "fa-$style fa-$icon";
+        if ($this->isVersion5()) {
+            return match (true) {
+                ($family === 'duotone') => 'fa'.substr($family, 0, 1)." fa-{$icon}",
+                default => 'fa'.substr($style, 0, 1)." fa-{$icon}",
+            };
+        }
+
+        return match (true) {
+            ($family === 'duotone') => "fa-{$family} fa-{$icon}",
+            ($family === 'classic') => "fa-{$style} fa-{$icon}",
+            default => "fa-{$family} fa-{$style} fa-{$icon}",
+        };
     }
 
     protected function authToken(): string
@@ -128,7 +135,12 @@ class FontAwesome
                     icons {
                         label
                         id
-                        membership {'.$this->kit()->get('license').'}
+                        familyStylesByLicense {
+                            '.$this->kit()->get('license').' {
+                                family
+                                style
+                            }
+                        }
                     }
                 }
             }';
@@ -158,5 +170,10 @@ class FontAwesome
         if (empty($this->kitToken)) {
             throw new \Exception('Please add your Font Awesome Kit Token to your .env file.');
         }
+    }
+
+    protected function isVersion5(): bool
+    {
+        return Str::startsWith($this->kit()->get('version'), '5');
     }
 }

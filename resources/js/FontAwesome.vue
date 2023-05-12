@@ -1,41 +1,50 @@
 <template>
-    <div :class="this.classes" v-if="icons">
+    <div class="flex icon-fieldtype-wrapper" v-if="icons">
         <v-select
             ref="input"
+            class="w-full"
+            append-to-body
+            :calculate-position="positionOptions"
+            clearable
             :name="name"
-            :disabled="isReadOnly"
+            :disabled="config.disabled || isReadOnly"
             :options="paginated"
-            :filterable="false"
-            :value="value"
-            @input="update"
+            :placeholder="config.placeholder || 'Search ...'"
+            :searchable="true"
+            :multiple="false"
+            :close-on-select="true"
+            :value="selectedOption"
             @open="onOpen"
             @close="onClose"
+            @input="vueSelectUpdated"
             @search="(query) => (search = query)"
+            @search:focus="$emit('focus')"
+            @search:blur="$emit('blur')"
         >
-            <template #option="icon">
-                <i class="inline-block w-4 mr-sm" :class="icon.class" />
-                <span v-text="icon.label" />
+            <template slot="option" slot-scope="icon">
+                <div class="flex items-center">
+                    <i class="flex items-center w-5 h-5" :class="icon.class" />
+                    <span class="ml-4 text-xs text-gray-800 truncate">{{ icon.label }}</span>
+                </div>
             </template>
 
-            <template #selected-option="icon">
-                <i class="inline-block w-4 mr-sm" :class="icon.class" />
-                <span v-text="icon.label" />
+            <template slot="selected-option" slot-scope="icon">
+                <div class="flex items-center">
+                    <i class="flex items-center w-5 h-5" :class="icon.class" />
+                    <span class="ml-4 text-xs text-gray-800 truncate">{{ icon.label }}</span>
+                </div>
             </template>
 
-            <template #list-footer>
-                <span class="chrome-fix" v-show="hasNextPage" ref="load" />
+            <template slot="list-footer">
+                <span v-show="hasNextPage" ref="load" />
             </template>
         </v-select>
     </div>
 </template>
 
-<style scoped>
-.fak {
-    font-family: "Font Awesome Kit" !important;
-}
-</style>
-
 <script>
+import { computePosition, offset } from '@floating-ui/dom';
+
 export default {
     mixins: [Fieldtype],
 
@@ -47,13 +56,13 @@ export default {
         }
     },
 
+    mounted() {
+        this.loadFontAwesomeScript();
+    },
+
     computed: {
         icons() {
             return this.$store.state.publish.fontAwesome.icons
-        },
-
-        classes() {
-            return `font-awesome ${this.meta.license} version-${this.meta.version.charAt(0)}`
         },
 
         filtered() {
@@ -69,9 +78,33 @@ export default {
         hasNextPage() {
             return this.paginated.length < this.filtered.length
         },
+
+        selectedOption() {
+            return this.icons.find(icon => icon.class === this.value);
+        },
+
+        fontAwesomeScriptIsLoaded() {
+            let scripts = Array.from(document.getElementsByTagName("script"))
+                .filter(script => script.src === this.meta.script)
+                .length
+
+            return scripts ? true : false;
+        }
     },
 
     methods: {
+        focus() {
+            this.$refs.input.focus();
+        },
+
+        vueSelectUpdated(value) {
+            if (value) {
+                this.update(value.class)
+            } else {
+                this.update(null);
+            }
+        },
+
         async onOpen() {
             if (this.hasNextPage) {
                 await this.$nextTick()
@@ -92,59 +125,31 @@ export default {
                 ul.scrollTop = scrollTop
             }
         },
+
+        positionOptions(dropdownList, component, { width }) {
+            dropdownList.style.width = width
+
+            computePosition(component.$refs.toggle, dropdownList, {
+                placement: 'bottom',
+                middleware: [
+                    offset({ mainAxis: 0, crossAxis: -1 }),
+                ]
+            }).then(({ x, y }) => {
+                Object.assign(dropdownList.style, {
+                    // Round to avoid blurry text
+                    left: `${Math.round(x)}px`,
+                    top: `${Math.round(y)}px`,
+                });
+            });
+        },
+
+        loadFontAwesomeScript() {
+            if (! this.fontAwesomeScriptIsLoaded) {
+                let externalScript = document.createElement('script')
+                externalScript.setAttribute('src', this.meta.script)
+                document.head.appendChild(externalScript)
+            }
+        }
     },
 }
 </script>
-
-<style scoped>
-
-    /* This fixes an issue with Duotone icons being displayed wrong */
-    .font-awesome {
-        letter-spacing: initial;
-    }
-
-    .font-awesome.free.version-5 .fas,
-    .font-awesome.free.version-5 .far {
-        font-family: "Font Awesome 5 Free" !important;
-    }
-
-    .font-awesome.pro.version-5 .fas,
-    .font-awesome.pro.version-5 .far,
-    .font-awesome.pro.version-5 .fal {
-        font-family: "Font Awesome 5 Pro" !important;
-    }
-
-    .font-awesome.version-5 .fad {
-        font-family: "Font Awesome 5 Duotone" !important;
-    }
-
-    .font-awesome.version-5 .fab {
-        font-family: "Font Awesome 5 Brands" !important;
-    }
-
-    .font-awesome.free.version-6 .fa-solid,
-    .font-awesome.free.version-6 .fa-regular {
-        font-family: "Font Awesome 6 Free" !important;
-    }
-
-    .font-awesome.pro.version-6 .fa-solid,
-    .font-awesome.pro.version-6 .fa-regular,
-    .font-awesome.pro.version-6 .fa-light,
-    .font-awesome.pro.version-6 .fa-thin {
-        font-family: "Font Awesome 6 Pro" !important;
-    }
-
-    .font-awesome.version-6 .fa-duotone {
-        font-family: "Font Awesome 6 Duotone" !important;
-    }
-
-    .font-awesome.version-6 .fa-brands {
-        font-family: "Font Awesome 6 Brands" !important;
-    }
-
-    .chrome-fix {
-        display: inline-block;
-        height: 1px;
-    }
-
-</style>

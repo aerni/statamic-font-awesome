@@ -10,6 +10,7 @@
         "prod": "mix --production"
     },
     "dependencies": {
+        "@floating-ui/dom": "^1.2.5",
         "vue": "^2.6.14"
     },
     "devDependencies": {
