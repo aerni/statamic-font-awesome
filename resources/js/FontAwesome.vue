@@ -1,28 +1,41 @@
 <template>
-    <div v-if="icons">
+    <div class="flex icon-fieldtype-wrapper" v-if="icons">
         <v-select
             ref="input"
+            class="w-full"
+            append-to-body
+            :calculate-position="positionOptions"
+            clearable
             :name="name"
-            :disabled="isReadOnly"
+            :disabled="config.disabled || isReadOnly"
             :options="paginated"
-            :filterable="false"
-            :value="value"
-            @input="update"
+            :placeholder="config.placeholder || 'Search ...'"
+            :searchable="true"
+            :multiple="false"
+            :close-on-select="true"
+            :value="selectedOption"
             @open="onOpen"
             @close="onClose"
+            @input="vueSelectUpdated"
             @search="(query) => (search = query)"
+            @search:focus="$emit('focus')"
+            @search:blur="$emit('blur')"
         >
-            <template #option="icon">
-                <i class="inline-block w-4 mr-sm" :class="icon.class" />
-                <span v-text="icon.label" />
+            <template slot="option" slot-scope="icon">
+                <div class="flex items-center">
+                    <i class="flex items-center w-5 h-5" :class="icon.class" />
+                    <span class="ml-4 text-xs text-gray-800 truncate">{{ icon.label }}</span>
+                </div>
             </template>
 
-            <template #selected-option="icon">
-                <i class="inline-block w-4 mr-sm" :class="icon.class" />
-                <span v-text="icon.label" />
+            <template slot="selected-option" slot-scope="icon">
+                <div class="flex items-center">
+                    <i class="flex items-center w-5 h-5" :class="icon.class" />
+                    <span class="ml-4 text-xs text-gray-800 truncate">{{ icon.label }}</span>
+                </div>
             </template>
 
-            <template #list-footer>
+            <template slot="list-footer">
                 <span v-show="hasNextPage" ref="load" />
             </template>
         </v-select>
@@ -30,6 +43,8 @@
 </template>
 
 <script>
+import { computePosition, offset } from '@floating-ui/dom';
+
 export default {
     mixins: [Fieldtype],
 
@@ -59,9 +74,25 @@ export default {
         hasNextPage() {
             return this.paginated.length < this.filtered.length
         },
+
+        selectedOption() {
+            return this.icons.find(icon => icon.class === this.value);
+        }
     },
 
     methods: {
+        focus() {
+            this.$refs.input.focus();
+        },
+
+        vueSelectUpdated(value) {
+            if (value) {
+                this.update(value.class)
+            } else {
+                this.update(null);
+            }
+        },
+
         async onOpen() {
             if (this.hasNextPage) {
                 await this.$nextTick()
@@ -81,6 +112,23 @@ export default {
                 await this.$nextTick()
                 ul.scrollTop = scrollTop
             }
+        },
+
+        positionOptions(dropdownList, component, { width }) {
+            dropdownList.style.width = width
+
+            computePosition(component.$refs.toggle, dropdownList, {
+                placement: 'bottom',
+                middleware: [
+                    offset({ mainAxis: 0, crossAxis: -1 }),
+                ]
+            }).then(({ x, y }) => {
+                Object.assign(dropdownList.style, {
+                    // Round to avoid blurry text
+                    left: `${Math.round(x)}px`,
+                    top: `${Math.round(y)}px`,
+                });
+            });
         },
     },
 }

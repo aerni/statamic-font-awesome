@@ -38,14 +38,4 @@ class FontAwesomeFieldtype extends Fieldtype
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
         ];
     }
-
-    public function preProcess($data): ?array
-    {
-        return $data ? FontAwesome::icon($data) : null;
-    }
-
-    public function process($data): ?string
-    {
-        return $data['class'] ?? $data;
-    }
 }
