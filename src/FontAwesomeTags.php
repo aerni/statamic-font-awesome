@@ -2,16 +2,19 @@
 
 namespace Aerni\FontAwesome;
 
-use Statamic\Tags\Tags;
 use Facades\Aerni\FontAwesome\FontAwesome;
+use Statamic\Fields\Value;
+use Statamic\Tags\Tags;
 
 class FontAwesomeTags extends Tags
 {
     protected static $handle = 'font_awesome';
 
-    public function wildcard($icon): string
+    public function wildcard($icon): ?string
     {
-        return $this->output($this->context->get($icon));
+        return ($icon = $this->context->get($icon))
+            ? $this->output($icon)
+            : null;
     }
 
     public function kit(): string
@@ -21,7 +24,7 @@ class FontAwesomeTags extends Tags
         return "<script defer src='$kitUrl' crossorigin='anonymous'></script>";
     }
 
-    protected function output($icon): string
+    protected function output(Value $icon): string
     {
         $class = trim("{$icon->value()} {$this->params->get('class')}");
 
