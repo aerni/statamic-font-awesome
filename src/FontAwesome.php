@@ -98,8 +98,14 @@ class FontAwesome
 
     protected function iconClass(string $icon, string $style, string $family): string
     {
+        if ($this->isVersion5()) {
+            return match (true) {
+                ($family === 'duotone') => 'fa'.substr($family, 0, 1)." fa-{$icon}",
+                default => 'fa'.substr($style, 0, 1)." fa-{$icon}",
+            };
+        }
+
         return match (true) {
-            ($this->isVersion5()) => 'fa'.substr($style, 0, 1)." fa-{$icon}",
             ($family === 'duotone') => "fa-{$family} fa-{$icon}",
             ($family === 'classic') => "fa-{$style} fa-{$icon}",
             default => "fa-{$family} fa-{$style} fa-{$icon}",
