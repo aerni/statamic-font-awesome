@@ -1,4 +1,4 @@
-![Statamic](https://flat.badgen.net/badge/Statamic/3.2.22+/FF269E) ![Packagist version](https://flat.badgen.net/packagist/v/aerni/font-awesome/latest) ![Packagist Total Downloads](https://flat.badgen.net/packagist/dt/aerni/font-awesome)
+![Statamic](https://flat.badgen.net/badge/Statamic/4.0+/FF269E) ![Packagist version](https://flat.badgen.net/packagist/v/aerni/font-awesome/latest) ![Packagist Total Downloads](https://flat.badgen.net/packagist/dt/aerni/font-awesome)
 
 # Font Awesome
 This Statamic addon adds a Fieldtype to easily search and select Font Awesome icons. It also comes with a Tag to output selected icons in your template. It supports Font Awesome version `5.x` and `6.x`.
