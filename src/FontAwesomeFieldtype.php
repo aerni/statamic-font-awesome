@@ -19,8 +19,8 @@ class FontAwesomeFieldtype extends Fieldtype
                 'display' => __('Selection'),
                 'fields' => [
                     'styles' => [
-                        'display' => __('Styles'),
-                        'instructions' => 'Only show icons of the selected styles. Leave empty to show all icons.',
+                        'display' => __('font-awesome::fieldtype.config.styles.display'),
+                        'instructions' => __('font-awesome::fieldtype.config.styles.instructions'),
                         'type' => 'select',
                         'multiple' => 'true',
                         'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
