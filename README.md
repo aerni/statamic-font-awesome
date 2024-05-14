@@ -69,25 +69,35 @@ FA_KIT_TOKEN=************************************
 
 Add the `Font Awesome` Fieldtype to a Blueprint or Fieldset. The Fieldtype provides the option to only make certain icon styles available for selection.
 
-### Template
+### Tag
 
 Add the following Tag to the `<head>` of your layout view to render the Font Awesome script.
 
-```html
+```antlers
 {{ font_awesome:kit }}
 ```
 
-You may use a different Kit in your template using the `token` parameter.
+You may use a different Kit for rendering the icons in your template using the `token` parameter.
 
-```html
+```antlers
 {{ font_awesome:kit token="f481b75381" }}
 ```
 
-Use the following Tag to render an icon. In this example `icon` is the variable saved in your content.
+Render an icon by using the handle of a Font Awesome field as the wildcard method.
 
-```html
-{{ font_awesome:icon }}
+```antlers
+{{ font_awesome:icon_field }}
 ```
+
+You may also use the shorter tag alias instead.
+
+```antlers
+{{ fa:kit }}
+
+{{ fa:icon_field }}
+```
+
+
 
 ## Credits
 Developed by [Michael Aerni](https://www.michaelaerni.ch)
