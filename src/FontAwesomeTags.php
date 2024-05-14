@@ -9,6 +9,7 @@ use Statamic\Tags\Tags;
 class FontAwesomeTags extends Tags
 {
     protected static $handle = 'font_awesome';
+    protected static $aliases = ['fa'];
 
     public function wildcard($icon): ?string
     {
