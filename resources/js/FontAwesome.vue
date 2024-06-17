@@ -24,14 +24,14 @@
             <template slot="option" slot-scope="icon">
                 <div class="flex items-center">
                     <i class="flex items-center w-5 h-5" :class="icon.class" />
-                    <span class="ml-4 text-xs text-gray-800 dark:text-white truncate">{{ icon.label }}</span>
+                    <span class="ml-4 text-xs truncate">{{ icon.label }}</span>
                 </div>
             </template>
 
             <template slot="selected-option" slot-scope="icon">
                 <div class="flex items-center">
                     <i class="flex items-center w-5 h-5" :class="icon.class" />
-                    <span class="ml-4 text-xs text-gray-800 dark:text-white truncate">{{ icon.label }}</span>
+                    <span class="ml-4 text-xs truncate">{{ icon.label }}</span>
                 </div>
             </template>
 
