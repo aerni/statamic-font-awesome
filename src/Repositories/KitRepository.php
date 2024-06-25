@@ -10,15 +10,9 @@ use Illuminate\Support\Facades\Cache;
 
 class KitRepository implements FontAwesome
 {
-    protected string $apiToken;
-    protected string $kitToken;
-
-    public function __construct()
+    public function __construct(protected string $apiToken, protected string $kitToken)
     {
-        $this->apiToken = config('font-awesome.api_token') ?? '';
-        $this->kitToken = config('font-awesome.kit_token') ?? '';
-
-        $this->validateConfig();
+        //
     }
 
     public function all(): Collection
@@ -160,17 +154,6 @@ class KitRepository implements FontAwesome
                     }
                 }
             }';
-    }
-
-    protected function validateConfig(): void
-    {
-        if (empty($this->apiToken)) {
-            throw new \Exception('Please add your Font Awesome API Token to your .env file.');
-        }
-
-        if (empty($this->kitToken)) {
-            throw new \Exception('Please add your Font Awesome Kit Token to your .env file.');
-        }
     }
 
     protected function isVersion5(): bool

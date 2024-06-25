@@ -27,8 +27,15 @@ class ServiceProvider extends AddonServiceProvider
 
     public function bootAddon()
     {
-        config('font-awesome.local', false)
-            ? $this->app->singleton(FontAwesome::class, LocalRepository::class)
-            : $this->app->singleton(FontAwesome::class, KitRepository::class);
+        if (config('font-awesome.local', false)) {
+            $this->app->singleton(FontAwesome::class, LocalRepository::class);
+        } else {
+            $this->app->singleton(FontAwesome::class, function () {
+                return new KitRepository(
+                    apiToken: config('font-awesome.api_token'),
+                    kitToken: config('font-awesome.kit_token')
+                );
+            });
+        }
     }
 }
