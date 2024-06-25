@@ -3,8 +3,9 @@
 namespace Aerni\FontAwesome;
 
 use Aerni\FontAwesome\Contracts\FontAwesome;
-use Aerni\FontAwesome\Repositories\KitRepository;
 use Statamic\Providers\AddonServiceProvider;
+use Aerni\FontAwesome\Repositories\KitRepository;
+use Aerni\FontAwesome\Repositories\LocalRepository;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -24,8 +25,10 @@ class ServiceProvider extends AddonServiceProvider
         __DIR__.'/../resources/dist/js/cp.js',
     ];
 
-    public function register()
+    public function bootAddon()
     {
-        $this->app->singleton(FontAwesome::class, KitRepository::class);
+        config('font-awesome.local', false)
+            ? $this->app->singleton(FontAwesome::class, LocalRepository::class)
+            : $this->app->singleton(FontAwesome::class, KitRepository::class);
     }
 }

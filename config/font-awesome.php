@@ -24,4 +24,26 @@ return [
 
     'kit_token' => env('FA_KIT_TOKEN'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Host Yourself
+    |--------------------------------------------------------------------------
+    |
+    | If you'd rather host Font Awesome yourself, set this to true.
+    |
+    */
+
+    'local' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Path
+    |--------------------------------------------------------------------------
+    |
+    | The path to your local Font Awesome files.
+    |
+    */
+
+    'path' => resource_path('fonts/fontawesome'),
+
 ];
