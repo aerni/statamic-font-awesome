@@ -1,13 +1,14 @@
 <?php
 
-namespace Aerni\FontAwesome;
+namespace Aerni\FontAwesome\Repositories;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
+use Aerni\FontAwesome\Contracts\FontAwesome;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
-class FontAwesome
+class LocalRepository implements FontAwesome
 {
     protected string $apiToken;
     protected string $kitToken;

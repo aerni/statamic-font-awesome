@@ -2,7 +2,7 @@
 
 namespace Aerni\FontAwesome;
 
-use Facades\Aerni\FontAwesome\FontAwesome;
+use Aerni\FontAwesome\Facades\FontAwesome;
 use Statamic\Fields\Value;
 use Statamic\Tags\Tags;
 
