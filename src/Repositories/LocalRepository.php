@@ -35,12 +35,4 @@ class LocalRepository extends Repository
     {
         return $this->store->url('css/all.css');
     }
-
-    // TODO: Fix implementation or drop support for v5
-    protected function isVersion5(): bool
-    {
-        return false;
-
-        // return Str::startsWith($this->kit()->get('version'), '5');
-    }
 }

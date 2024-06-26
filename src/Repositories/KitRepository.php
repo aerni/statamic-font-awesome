@@ -128,9 +128,4 @@ class KitRepository extends Repository
     {
         return $this->kit()->get('url');
     }
-
-    protected function isVersion5(): bool
-    {
-        return Str::startsWith($this->kit()->get('version'), '5');
-    }
 }
