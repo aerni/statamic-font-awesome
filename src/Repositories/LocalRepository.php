@@ -17,22 +17,25 @@ class LocalRepository extends Repository
     public function icons(): Collection
     {
         return Cache::rememberForever('font_awesome::icons', function () {
-            return collect($this->store->json('/metadata/icon-families.json'))->flatMap(function ($icon, $id) {
-                return collect($icon['familyStylesByLicense'])
-                    ->flatten(1)
-                    ->unique()
-                    ->map(fn ($familyStyle) => [
-                        'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
-                        'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$id}",
-                        'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
-                        'class' => $this->iconClass($id, $familyStyle['style'], $familyStyle['family']),
-                    ])->toArray();
-            })->groupBy('style')->sortKeys();
+            return collect($this->store->json('/metadata/icon-families.json'))
+                ->flatMap(function (array $icon, string $id) {
+                    return collect($icon['familyStylesByLicense'])
+                        ->flatten(1)
+                        ->unique()
+                        ->map(fn (array $familyStyle) => [
+                            'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
+                            'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$id}",
+                            'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
+                            'class' => $this->iconClass($id, $familyStyle['style'], $familyStyle['family']),
+                        ]);
+                })
+                ->groupBy('style')
+                ->sortKeys();
         });
     }
 
     public function css(): string
     {
-        return $this->store->url('css/all.css');
+        return $this->store->url('css/all.min.css');
     }
 }

@@ -14,4 +14,5 @@ interface FontAwesome
 
     public function styles(): Collection;
 
+    public function isUsingLocalDriver(): bool;
 }

@@ -2,6 +2,7 @@
 
 namespace Aerni\FontAwesome;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Aerni\FontAwesome\Tags\FontAwesomeTags;
 use Aerni\FontAwesome\Contracts\FontAwesome;
@@ -41,7 +42,7 @@ class ServiceProvider extends AddonServiceProvider
             $store = Storage::build([
                 'driver' => 'local',
                 'root' => config('font-awesome.path'),
-                'url' => '/fonts/fontawesome',
+                'url' => Str::after(config('font-awesome.path'), public_path()),
             ]);
 
             return new LocalRepository($store);

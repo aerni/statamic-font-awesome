@@ -24,17 +24,17 @@ abstract class Repository implements FontAwesome
         return $this->icons()->keys();
     }
 
-    protected function iconClass(string $icon, string $style, string $family): string
-    {
-        return match (true) {
-            ($family === 'duotone') => "fa-{$family} fa-{$icon}",
-            ($family === 'classic') => "fa-{$style} fa-{$icon}",
-            default => "fa-{$family} fa-{$style} fa-{$icon}",
-        };
-    }
-
     public function isUsingLocalDriver(): bool
     {
         return app(FontAwesome::class) instanceof LocalRepository;
+    }
+
+    protected function iconClass(string $id, string $style, string $family): string
+    {
+        return match (true) {
+            ($family === 'duotone') => "fa-{$family} fa-{$id}",
+            ($family === 'classic') => "fa-{$style} fa-{$id}",
+            default => "fa-{$family} fa-{$style} fa-{$id}",
+        };
     }
 }

@@ -43,36 +43,34 @@ class KitRepository extends Repository
                 'query' => $this->iconsQuery(),
             ])->json()['data']['release']['icons'];
 
-            $icons = collect($response)->flatMap(function ($icon) {
-                // The styles available for the license type of the kit.
-                $familyStyles = $icon['familyStylesByLicense'][$this->kit()->get('license')];
-
-                return collect($familyStyles)->map(fn ($familyStyle) => [
-                    'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
-                    'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
-                    'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
-                    'class' => $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
-                ])->toArray();
-            })->groupBy('style');
-
-            if ($this->customIcons()->isNotEmpty()) {
-                $icons->put('custom', $this->customIcons());
-            }
-
-            return $icons->sortKeys();
+            return collect($response)
+                ->flatMap(function (array $icon) {
+                    return collect($icon['familyStylesByLicense'])
+                        ->flatten(1)
+                        ->unique()
+                        ->map(fn (array $familyStyle) => [
+                            'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
+                            'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
+                            'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
+                            'class' => $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
+                        ]);
+                })
+                ->groupBy('style')
+                ->when($this->customIcons()->isNotEmpty(), fn ($icons) => $icons->put('custom', $this->customIcons()))
+                ->sortKeys();
         });
     }
 
     protected function customIcons(): Collection
     {
-        return collect($this->kit()->get('customIcons'))->map(function ($icon) {
-            return [
+        return collect($this->kit()->get('customIcons'))
+            ->map(fn (array $icon) => [
                 'style' => 'custom',
                 'id' => "custom-{$icon['name']}",
                 'label' => Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
                 'class' => "fak fa-{$icon['name']}",
-            ];
-        })->sortBy('id');
+            ])
+            ->sortBy('id');
     }
 
     protected function authToken(): string
