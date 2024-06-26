@@ -8,7 +8,10 @@ interface FontAwesome
 {
     public function all(): Collection;
 
+    public function icons(): Collection;
+
     public function icon(string $icon): ?array;
 
     public function styles(): Collection;
+
 }

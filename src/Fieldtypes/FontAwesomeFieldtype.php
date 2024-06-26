@@ -1,6 +1,6 @@
 <?php
 
-namespace Aerni\FontAwesome;
+namespace Aerni\FontAwesome\Fieldtypes;
 
 use Aerni\FontAwesome\Facades\FontAwesome;
 use Illuminate\Support\Str;
@@ -36,7 +36,8 @@ class FontAwesomeFieldtype extends Fieldtype
     {
         return [
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
-            'script' => FontAwesome::kit()->get('url'),
+            'script' => ! FontAwesome::isUsingLocalDriver() ? FontAwesome::script() : null,
+            'css' => FontAwesome::isUsingLocalDriver() ? FontAwesome::css() : null,
         ];
     }
 }

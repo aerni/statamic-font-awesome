@@ -1,10 +1,10 @@
 <?php
 
-namespace Aerni\FontAwesome;
+namespace Aerni\FontAwesome\Tags;
 
-use Aerni\FontAwesome\Facades\FontAwesome;
-use Statamic\Fields\Value;
 use Statamic\Tags\Tags;
+use Statamic\Fields\Value;
+use Aerni\FontAwesome\Facades\FontAwesome;
 
 class FontAwesomeTags extends Tags
 {
@@ -20,6 +20,10 @@ class FontAwesomeTags extends Tags
 
     public function kit(): string
     {
+        if (FontAwesome::isUsingLocalDriver()) {
+            throw new \Exception('The kit tag is not available when using the local driver.');
+        }
+
         $kitUrl = FontAwesome::kit($this->params->get('token'))->get('url');
 
         return "<script defer src='$kitUrl' crossorigin='anonymous'></script>";
