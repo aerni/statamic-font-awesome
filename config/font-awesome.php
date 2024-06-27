@@ -20,7 +20,7 @@ return [
     | Kit Driver Options
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the configuration that should be used when using the Kit driver.
+    | Here you may specify the configuration that should be used for the Kit driver.
     |
     */
 
@@ -34,7 +34,7 @@ return [
     | Local Driver Options
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the configuration that should be used when using the Local driver.
+    | Here you may specify the configuration that should be used for the Local driver.
     |
     */
 
