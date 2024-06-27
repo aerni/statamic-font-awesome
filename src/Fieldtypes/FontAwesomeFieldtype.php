@@ -3,7 +3,6 @@
 namespace Aerni\FontAwesome\Fieldtypes;
 
 use Aerni\FontAwesome\Facades\FontAwesome;
-use Illuminate\Support\Str;
 use Statamic\Fields\Fieldtype;
 
 class FontAwesomeFieldtype extends Fieldtype

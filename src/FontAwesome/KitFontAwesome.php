@@ -2,94 +2,73 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Illuminate\Support\Str;
 use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use Aerni\FontAwesome\Contracts\FontAwesomeDriver;
+use Aerni\FontAwesome\Contracts\FontAwesome;
+use Aerni\FontAwesome\Data\Kit;
 
-class KitFontAwesome implements FontAwesomeDriver
+class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
+    protected string $apiEndpoint = 'https://api.fontawesome.com';
+
     public function __construct(protected string $apiToken, protected string $kitToken)
     {
         //
     }
 
-    public function kit(string $token = null): Collection
-    {
-        if ($token) {
-            $this->kitToken = $token;
-        }
-
-        return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
-            $response = Http::withToken($this->authToken())
-                ->post('https://api.fontawesome.com', [
-                    'query' => $this->kitQuery(),
-                ])->json()['data']['me']['kit'];
-
-            return collect([
-                'id' => $response['token'],
-                'url' => "https://kit.fontawesome.com/{$response['token']}.js",
-                'license' => $response['licenseSelected'],
-                'version' => $response['version'],
-                'customIcons' => $response['iconUploads'],
-            ]);
-        });
-    }
-
     public function icons(): Icons
     {
-        return Cache::rememberForever('font_awesome::icons', function () {
-            $icons = Http::post('https://api.fontawesome.com', [
-                'query' => $this->iconsQuery(),
-            ])->json()['data']['release']['icons'];
+        return Cache::rememberForever('font_awesome::kit::icons', function () {
+            $icons = Http::post($this->apiEndpoint, ['query' => $this->iconsQuery()])
+                ->json('data.release.icons');
 
-            return Icons::make($icons)
-                ->flatMap(function (array $icon) {
-                    $familyStyles = collect($icon['familyStylesByLicense'])->flatten(1)->unique();
-
-                    return $familyStyles->map(fn ($familyStyle) => new Icon(
-                        id: "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
-                        label: "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
-                        style: "{$familyStyle['family']}-{$familyStyle['style']}",
-                        class: $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
-                    ));
-                })
-                ->merge($this->customIcons());
+            return $this->collectIcons($icons)->merge($this->collectCustomIcons());
         });
     }
 
-    protected function customIcons(): Icons
+    protected function collectCustomIcons(): Icons
     {
-        return Icons::make($this->kit()->get('customIcons'))
+        return Icons::make($this->kit()->customIcons)
             ->map(fn (array $icon) => new Icon(
                 id: "custom-{$icon['name']}",
-                label: Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
+                label: str($icon['name'])->replace('-', ' ')->title()->append(' Custom'),
                 style: 'custom',
                 class: "fak fa-{$icon['name']}",
             ))
             ->sortBy('id');
     }
 
-    public function script(): string
+    public function kit(string $token = null): Kit
     {
-        return $this->kit()->get('url');
+        if ($token) {
+            $this->kitToken = $token;
+        }
+
+        return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
+            $kit = Http::withToken($this->authToken())
+                ->post($this->apiEndpoint, ['query' => $this->kitQuery()])
+                ->json('data.me.kit');
+
+            return new Kit(
+                id: $kit['token'],
+                url: "https://kit.fontawesome.com/{$kit['token']}.js",
+                license: $kit['licenseSelected'],
+                version: $kit['version'],
+                customIcons: $kit['iconUploads'],
+            );
+        });
     }
 
-    protected function iconClass(string $id, string $style, string $family): string
+    public function script(): string
     {
-        return match (true) {
-            ($family === 'duotone') => "fa-{$family} fa-{$id}",
-            ($family === 'classic') => "fa-{$style} fa-{$id}",
-            default => "fa-{$family} fa-{$style} fa-{$id}",
-        };
+        return $this->kit()->url;
     }
 
     protected function authToken(): string
     {
-        if ($token = Cache::get('font_awesome::token')) {
+        if ($token = Cache::get('font_awesome::kit::token')) {
             return $token;
         }
 
@@ -97,7 +76,7 @@ class KitFontAwesome implements FontAwesomeDriver
             ->post('https://api.fontawesome.com/token')
             ->collect();
 
-        Cache::put('font_awesome::token', $response->get('access_token'), $response->get('expires_in'));
+        Cache::put('font_awesome::kit::token', $response->get('access_token'), $response->get('expires_in'));
 
         return $response->get('access_token');
     }
@@ -106,12 +85,12 @@ class KitFontAwesome implements FontAwesomeDriver
     {
         return
             'query {
-                release (version:'.'"'.$this->kit()->get('version').'"'.') {
+                release (version:'.'"'.$this->kit()->version.'"'.') {
                     icons {
                         label
                         id
                         familyStylesByLicense {
-                            '.$this->kit()->get('license').' {
+                            '.$this->kit()->license.' {
                                 family
                                 style
                             }

@@ -3,15 +3,14 @@
 namespace Aerni\FontAwesome\Contracts;
 
 use Aerni\FontAwesome\Data\Icon;
+use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Collection;
 
-interface FontAwesomeManager
+interface FontAwesome
 {
-    public function icons(): Collection;
+    public function icons(): Icons;
 
     public function icon(string $id): ?Icon;
 
     public function styles(): Collection;
-
-    public function isUsingLocalDriver(): bool;
 }

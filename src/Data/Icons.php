@@ -2,10 +2,9 @@
 
 namespace Aerni\FontAwesome\Data;
 
-use Aerni\FontAwesome\Contracts\Icons as IconsContract;
 use Illuminate\Support\Collection;
 
-class Icons extends Collection implements IconsContract
+class Icons extends Collection
 {
     public function icon(string $id): ?Icon
     {
