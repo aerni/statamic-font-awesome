@@ -24,7 +24,7 @@ class FontAwesomeFieldtype extends Fieldtype
                         'type' => 'select',
                         'multiple' => 'true',
                         'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
-                            return [$style => __(Str::of($style)->replace('-', ' ')->title()->toString())];
+                            return [$style => __(str($style)->title()->replace('-', ' ')->toString())];
                         }),
                     ],
                 ],

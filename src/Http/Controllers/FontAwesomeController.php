@@ -9,6 +9,6 @@ class FontAwesomeController extends Controller
 {
     public function __invoke()
     {
-        return response()->json(FontAwesome::all());
+        return response()->json(FontAwesome::icons());
     }
 }

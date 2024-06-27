@@ -1,13 +1,16 @@
 <?php
 
-namespace Aerni\FontAwesome\Repositories;
+namespace Aerni\FontAwesome\FontAwesome;
 
 use Illuminate\Support\Str;
+use Aerni\FontAwesome\Data\Icon;
+use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Aerni\FontAwesome\Contracts\FontAwesomeDriver;
 
-class KitRepository extends Repository
+class KitFontAwesome implements FontAwesomeDriver
 {
     public function __construct(protected string $apiToken, protected string $kitToken)
     {
@@ -36,41 +39,52 @@ class KitRepository extends Repository
         });
     }
 
-    public function icons(): Collection
+    public function icons(): Icons
     {
         return Cache::rememberForever('font_awesome::icons', function () {
-            $response = Http::post('https://api.fontawesome.com', [
+            $icons = Http::post('https://api.fontawesome.com', [
                 'query' => $this->iconsQuery(),
             ])->json()['data']['release']['icons'];
 
-            return collect($response)
+            return Icons::make($icons)
                 ->flatMap(function (array $icon) {
-                    return collect($icon['familyStylesByLicense'])
-                        ->flatten(1)
-                        ->unique()
-                        ->map(fn (array $familyStyle) => [
-                            'style' => "{$familyStyle['family']}-{$familyStyle['style']}",
-                            'id' => "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
-                            'label' => "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
-                            'class' => $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
-                        ]);
+                    $familyStyles = collect($icon['familyStylesByLicense'])->flatten(1)->unique();
+
+                    return $familyStyles->map(fn ($familyStyle) => new Icon(
+                        id: "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
+                        label: "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
+                        style: "{$familyStyle['family']}-{$familyStyle['style']}",
+                        class: $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
+                    ));
                 })
-                ->groupBy('style')
-                ->when($this->customIcons()->isNotEmpty(), fn ($icons) => $icons->put('custom', $this->customIcons()))
-                ->sortKeys();
+                ->merge($this->customIcons());
         });
     }
 
-    protected function customIcons(): Collection
+    protected function customIcons(): Icons
     {
-        return collect($this->kit()->get('customIcons'))
-            ->map(fn (array $icon) => [
-                'style' => 'custom',
-                'id' => "custom-{$icon['name']}",
-                'label' => Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
-                'class' => "fak fa-{$icon['name']}",
-            ])
+        return Icons::make($this->kit()->get('customIcons'))
+            ->map(fn (array $icon) => new Icon(
+                id: "custom-{$icon['name']}",
+                label: Str::of($icon['name'])->replace('-', ' ')->title().' (Custom)',
+                style: 'custom',
+                class: "fak fa-{$icon['name']}",
+            ))
             ->sortBy('id');
+    }
+
+    public function script(): string
+    {
+        return $this->kit()->get('url');
+    }
+
+    protected function iconClass(string $id, string $style, string $family): string
+    {
+        return match (true) {
+            ($family === 'duotone') => "fa-{$family} fa-{$id}",
+            ($family === 'classic') => "fa-{$style} fa-{$id}",
+            default => "fa-{$family} fa-{$style} fa-{$id}",
+        };
     }
 
     protected function authToken(): string
@@ -120,10 +134,5 @@ class KitRepository extends Repository
                     }
                 }
             }';
-    }
-
-    public function script(): string
-    {
-        return $this->kit()->get('url');
     }
 }

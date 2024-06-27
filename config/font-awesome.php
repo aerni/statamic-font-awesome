@@ -4,46 +4,43 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Host Yourself
+    | Default Font Awesome Driver
     |--------------------------------------------------------------------------
     |
-    | If you'd rather host Font Awesome yourself, set this to true.
+    | Here you may specify the default Font Awesome driver that should be used.
+    |
+    | Supported Drivers: "kit", "local"
     |
     */
 
-    'local' => false,
+    'driver' => 'kit',
 
     /*
     |--------------------------------------------------------------------------
-    | Path
+    | Kit Driver Options
     |--------------------------------------------------------------------------
     |
-    | The path to your Font Awesome files.
+    | Here you may specify the configuration that should be used when using the Kit driver.
     |
     */
 
-    'path' => public_path('fonts/fontawesome'),
+    'kit' => [
+        'api_token' => env('FA_API_TOKEN'),
+        'kit_token' => env('FA_KIT_TOKEN'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | API Token
+    | Local Driver Options
     |--------------------------------------------------------------------------
     |
-    | You can get your API Token in your Font Awesome Account Details.
+    | Here you may specify the configuration that should be used when using the Local driver.
     |
     */
 
-    'api_token' => env('FA_API_TOKEN'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Kit Token
-    |--------------------------------------------------------------------------
-    |
-    | The Token of the Kit you want to use, e.g. b121fed549.
-    |
-    */
-
-    'kit_token' => env('FA_KIT_TOKEN'),
+    'local' => [
+        'metadata' => resource_path('fonts/fontawesome/metadata'),
+        'css' => '/fonts/fontawesome/css/all.min.css',
+    ],
 
 ];
