@@ -28,6 +28,11 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
         });
     }
 
+    public function script(): string
+    {
+        return $this->kit()->url;
+    }
+
     protected function collectCustomIcons(): Icons
     {
         return Icons::make($this->kit()->customIcons)
@@ -57,11 +62,6 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
         });
     }
 
-    public function script(): string
-    {
-        return $this->kit()->url;
-    }
-
     protected function authToken(): string
     {
         if ($token = Cache::get('font_awesome::kit::token')) {
@@ -69,7 +69,7 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
         }
 
         $response = Http::withToken($this->apiToken)
-            ->post('https://api.fontawesome.com/token')
+            ->post("{$this->apiEndpoint}/token")
             ->collect();
 
         Cache::put('font_awesome::kit::token', $response->get('access_token'), $response->get('expires_in'));

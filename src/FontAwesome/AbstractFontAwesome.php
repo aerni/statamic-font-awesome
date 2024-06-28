@@ -39,8 +39,8 @@ abstract class AbstractFontAwesome implements FontAwesome
     protected function iconClass(string $id, string $style, string $family): string
     {
         return match (true) {
-            ($family === 'duotone') => "fa-{$family} fa-{$id}",
             ($family === 'classic') => "fa-{$style} fa-{$id}",
+            ($family === 'duotone') => "fa-{$family} fa-{$id}",
             default => "fa-{$family} fa-{$style} fa-{$id}",
         };
     }
