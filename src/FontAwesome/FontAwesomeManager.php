@@ -2,8 +2,8 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Illuminate\Support\Manager;
 use Aerni\FontAwesome\Contracts\FontAwesome;
+use Illuminate\Support\Manager;
 
 class FontAwesomeManager extends Manager
 {

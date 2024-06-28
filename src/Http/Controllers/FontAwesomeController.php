@@ -2,8 +2,8 @@
 
 namespace Aerni\FontAwesome\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use Aerni\FontAwesome\Facades\FontAwesome;
+use Illuminate\Routing\Controller;
 
 class FontAwesomeController extends Controller
 {

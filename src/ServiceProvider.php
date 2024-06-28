@@ -2,9 +2,9 @@
 
 namespace Aerni\FontAwesome;
 
+use Aerni\FontAwesome\Fieldtypes\FontAwesomeFieldtype;
 use Aerni\FontAwesome\Tags\FontAwesomeTags;
 use Statamic\Providers\AddonServiceProvider;
-use Aerni\FontAwesome\Fieldtypes\FontAwesomeFieldtype;
 
 class ServiceProvider extends AddonServiceProvider
 {

@@ -2,13 +2,14 @@
 
 namespace Aerni\FontAwesome\Tags;
 
-use Statamic\Tags\Tags;
-use Statamic\Fields\Value;
 use Aerni\FontAwesome\Facades\FontAwesome;
+use Statamic\Fields\Value;
+use Statamic\Tags\Tags;
 
 class FontAwesomeTags extends Tags
 {
     protected static $handle = 'font_awesome';
+
     protected static $aliases = ['fa'];
 
     public function wildcard($icon): ?string

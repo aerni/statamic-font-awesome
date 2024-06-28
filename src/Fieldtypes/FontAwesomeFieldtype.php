@@ -8,7 +8,9 @@ use Statamic\Fields\Fieldtype;
 class FontAwesomeFieldtype extends Fieldtype
 {
     protected static $handle = 'font_awesome';
+
     protected $categories = ['media'];
+
     protected $icon = 'icon_picker';
 
     protected function configFieldItems(): array

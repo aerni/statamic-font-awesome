@@ -2,11 +2,11 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Illuminate\Support\Str;
+use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Collection;
-use Aerni\FontAwesome\Contracts\FontAwesome;
+use Illuminate\Support\Str;
 
 abstract class AbstractFontAwesome implements FontAwesome
 {

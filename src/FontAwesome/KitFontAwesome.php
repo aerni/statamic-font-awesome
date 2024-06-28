@@ -2,12 +2,12 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
+use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
-use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Kit;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
@@ -40,7 +40,7 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
             ->sortBy('id');
     }
 
-    public function kit(string $token = null): Kit
+    public function kit(?string $token = null): Kit
     {
         if ($token) {
             $this->kitToken = $token;

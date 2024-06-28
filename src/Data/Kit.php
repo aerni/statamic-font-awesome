@@ -10,6 +10,5 @@ class Kit
         public string $license,
         public string $version,
         public array $customIcons,
-    )
-    { }
+    ) {}
 }

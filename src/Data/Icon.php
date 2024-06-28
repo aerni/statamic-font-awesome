@@ -9,6 +9,5 @@ class Icon
         public string $label,
         public string $style,
         public string $class,
-    )
-    { }
+    ) {}
 }
