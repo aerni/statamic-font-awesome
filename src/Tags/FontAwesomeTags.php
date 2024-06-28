@@ -25,9 +25,9 @@ class FontAwesomeTags extends Tags
             throw new \Exception('The kit tag is not available when using the local driver.');
         }
 
-        $kitUrl = FontAwesome::kit($this->params->get('token'))->url;
+        $kitUrl = FontAwesome::script();
 
-        return "<script defer src='$kitUrl' crossorigin='anonymous'></script>";
+        return "<script defer src='{$kitUrl}' crossorigin='anonymous'></script>";
     }
 
     protected function output(Value $icon): string

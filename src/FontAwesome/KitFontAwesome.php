@@ -40,12 +40,8 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
             ->sortBy('id');
     }
 
-    public function kit(?string $token = null): Kit
+    protected function kit(): Kit
     {
-        if ($token) {
-            $this->kitToken = $token;
-        }
-
         return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
             $kit = Http::withToken($this->authToken())
                 ->post($this->apiEndpoint, ['query' => $this->kitQuery()])
@@ -53,7 +49,7 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 
             return new Kit(
                 id: $kit['token'],
-                url: "https://kit.fontawesome.com/{$kit['token']}.js",
+                url: "{$this->apiEndpoint}/{$kit['token']}.js",
                 license: $kit['licenseSelected'],
                 version: $kit['version'],
                 customIcons: $kit['iconUploads'],
