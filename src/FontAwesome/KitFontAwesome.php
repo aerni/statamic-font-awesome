@@ -38,14 +38,13 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
                 'familyStylesByLicense' => [
                     'other' => [
                         [
-                            'family' => 'kit',
+                            'family' => count($icon['pathData']) === 2 ? 'kit-duotone' : 'kit', // According to https://docs.fontawesome.com/apis/graphql/objects#familystyle
                             'style' => 'custom',
                         ],
                     ],
                 ],
                 'id' => $icon['name'],
                 'label' => str($icon['name'])->replace('-', ' ')->title(),
-                'duotone' => count($icon['pathData']) === 2,
             ]);
     }
 

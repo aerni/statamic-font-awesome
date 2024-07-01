@@ -2,10 +2,11 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Aerni\FontAwesome\Contracts\FontAwesome;
+use Statamic\Facades\YAML;
+use Illuminate\Support\Str;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Facades\Cache;
-use Statamic\Facades\YAML;
+use Aerni\FontAwesome\Contracts\FontAwesome;
 
 class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
@@ -19,9 +20,9 @@ class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
         return Cache::rememberForever('font_awesome::local::icons', function () {
             $icons = YAML::file("{$this->metadata}/icon-families.yml")->parse();
 
-            /* Make sure we have an ID to work with. */
             foreach ($icons as $id => $icon) {
-                $icons[$id]['id'] = $id;
+                $icons[$id]['id'] = $id; /* Make sure we have an ID to work with. */
+                $icons[$id]['label'] = Str::title($icon['label']); /* Ensure custom icons also use title case. */
             }
 
             return $this->collectIcons($icons);
