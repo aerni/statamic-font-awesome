@@ -53,7 +53,7 @@ Next, download [Font Awesome (For The Web)](https://fontawesome.com/download) an
 The files in the `metadata` directory are required to get the information about the icons. I recommend placing the metadata in the `resources` directory, as these files don't need to be publicly accessible. 
 
 #### CSS
-The `css` config option defines the public path to the stylesheet that will be loaded in the Control Panel. The stylesheet must be placed in the `public` directory. The CSS will only be used in the Control Panel. You will still have to add the stylesheet to your frontend layout.
+The `css` config option defines the public path to the stylesheet that will be loaded in the Control Panel. The stylesheet must be placed in the `public` directory. The CSS will only be loaded in the Control Panel. You still need to add the stylesheet to your frontend layout yourself.
 
 ## Usage
 
