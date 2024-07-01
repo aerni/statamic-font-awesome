@@ -40,7 +40,7 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
                 id: "custom-{$icon['name']}",
                 label: str($icon['name'])->replace('-', ' ')->title()->append(' Custom'),
                 style: 'custom',
-                class: "fak fa-{$icon['name']}",
+                class: $this->customIconClass($icon['name'], $icon['pathData']),
             ))
             ->sortBy('id');
     }
@@ -105,7 +105,10 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
                         token
                         licenseSelected
                         version
-                        iconUploads {'.'name'.'}
+                        iconUploads {
+                            name
+                            pathData
+                        }
                     }
                 }
             }';

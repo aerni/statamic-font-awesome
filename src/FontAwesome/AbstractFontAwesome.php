@@ -44,4 +44,11 @@ abstract class AbstractFontAwesome implements FontAwesome
             default => "fa-{$family} fa-{$style} fa-{$id}",
         };
     }
+
+    protected function customIconClass(string $name, array $pathData): string
+    {
+        return count($pathData) === 1
+            ? "fa-kit fa-{$name}"
+            : "fa-kit-duotone fa-{$name}";
+    }
 }
