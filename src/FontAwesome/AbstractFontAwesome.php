@@ -13,7 +13,7 @@ abstract class AbstractFontAwesome implements FontAwesome
 
     public function icon(string $id): ?Icon
     {
-        return $this->icons()->icon($id);
+        return $this->icons()->get($id);
     }
 
     public function styles(): Collection
@@ -32,7 +32,8 @@ abstract class AbstractFontAwesome implements FontAwesome
                     label: "{$icon['label']} {$this->familyStyleForLabel($familyStyle)}",
                     style: "{$familyStyle['family']}-{$familyStyle['style']}",
                     class: $this->iconClass($icon['id'], $familyStyle['family'], $familyStyle['style']),
-                ));
+                ))
+                ->keyBy('id');
         });
     }
 
