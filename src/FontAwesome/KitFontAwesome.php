@@ -62,7 +62,7 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 
             return new Kit(
                 id: $kit['token'],
-                url: "{$this->apiEndpoint}/{$kit['token']}.js",
+                url: "https://kit.fontawesome.com/{$kit['token']}.js",
                 license: $kit['licenseSelected'],
                 version: $kit['version'],
                 customIcons: $kit['iconUploads'],
