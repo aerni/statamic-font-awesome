@@ -2,11 +2,11 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Statamic\Facades\YAML;
-use Illuminate\Support\Str;
+use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Facades\Cache;
-use Aerni\FontAwesome\Contracts\FontAwesome;
+use Illuminate\Support\Str;
+use Statamic\Facades\YAML;
 
 class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
