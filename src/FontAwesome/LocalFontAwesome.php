@@ -19,6 +19,7 @@ class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
         return Cache::rememberForever('font_awesome::local::icons', function () {
             $icons = YAML::file("{$this->metadata}/icon-families.yml")->parse();
 
+            /* Make sure we have an ID to work with. */
             foreach ($icons as $id => $icon) {
                 $icons[$id]['id'] = $id;
             }

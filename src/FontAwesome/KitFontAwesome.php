@@ -3,9 +3,9 @@
 namespace Aerni\FontAwesome\FontAwesome;
 
 use Aerni\FontAwesome\Contracts\FontAwesome;
-use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
 use Aerni\FontAwesome\Data\Kit;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -22,27 +22,36 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
     {
         return Cache::rememberForever('font_awesome::kit::icons', function () {
             $icons = Http::post($this->apiEndpoint, ['query' => $this->iconsQuery()])
-                ->json('data.release.icons');
+                ->collect('data.release.icons')
+                ->merge($this->customIcons())
+                ->toArray();
 
-            return $this->collectIcons($icons)->merge($this->collectCustomIcons());
+            return $this->collectIcons($icons);
         });
+    }
+
+    protected function customIcons(): Collection
+    {
+        /* Mirror the same object structure that the API returns for regular icons. */
+        return collect($this->kit()->customIcons)
+            ->map(fn (array $icon) => [
+                'familyStylesByLicense' => [
+                    'other' => [
+                        [
+                            'family' => 'kit',
+                            'style' => 'custom',
+                        ],
+                    ],
+                ],
+                'id' => $icon['name'],
+                'label' => str($icon['name'])->replace('-', ' ')->title(),
+                'duotone' => count($icon['pathData']) === 2,
+            ]);
     }
 
     public function script(): string
     {
         return $this->kit()->url;
-    }
-
-    protected function collectCustomIcons(): Icons
-    {
-        return Icons::make($this->kit()->customIcons)
-            ->map(fn (array $icon) => new Icon(
-                id: "custom-{$icon['name']}",
-                label: str($icon['name'])->replace('-', ' ')->title()->append(' Custom'),
-                style: 'custom',
-                class: $this->customIconClass($icon['name'], $icon['pathData']),
-            ))
-            ->sortBy('id');
     }
 
     protected function kit(): Kit

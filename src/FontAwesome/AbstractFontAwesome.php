@@ -2,11 +2,10 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Aerni\FontAwesome\Contracts\FontAwesome;
 
 abstract class AbstractFontAwesome implements FontAwesome
 {
@@ -25,18 +24,37 @@ abstract class AbstractFontAwesome implements FontAwesome
     protected function collectIcons(array $icons): Icons
     {
         return Icons::make($icons)->flatMap(function (array $icon) {
-            $familyStyles = collect($icon['familyStylesByLicense'])->flatten(1)->unique();
-
-            return $familyStyles->map(fn ($familyStyle) => new Icon(
-                id: "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
-                label: "{$icon['label']}".' ('.Str::title("{$familyStyle['family']} {$familyStyle['style']}").')',
-                style: "{$familyStyle['family']}-{$familyStyle['style']}",
-                class: $this->iconClass($icon['id'], $familyStyle['style'], $familyStyle['family']),
-            ));
+            return collect($icon['familyStylesByLicense'])
+                ->flatten(1)
+                ->unique()
+                ->map(fn ($familyStyle) => ($familyStyle['family'] !== 'kit')
+                    ? $this->makeIcon($familyStyle, $icon)
+                    : $this->makeCustomIcon($familyStyle, $icon)
+                );
         });
     }
 
-    protected function iconClass(string $id, string $style, string $family): string
+    protected function makeIcon(array $familyStyle, array $icon): Icon
+    {
+        return new Icon(
+            id: "{$familyStyle['family']}-{$familyStyle['style']}-{$icon['id']}",
+            label: str("{$icon['label']} ({$familyStyle['family']} {$familyStyle['style']})")->title(),
+            style: "{$familyStyle['family']}-{$familyStyle['style']}",
+            class: $this->iconClass($icon['id'], $familyStyle['family'], $familyStyle['style']),
+        );
+    }
+
+    protected function makeCustomIcon(array $familyStyle, array $icon): Icon
+    {
+        return new Icon(
+            id: "{$familyStyle['style']}-{$icon['id']}",
+            label: str("{$icon['label']} (Custom)")->title(),
+            style: $familyStyle['style'],
+            class: $this->customIconClass($icon['id'], $icon['duotone'] ?? false),
+        );
+    }
+
+    protected function iconClass(string $id, string $family, string $style): string
     {
         return match (true) {
             ($family === 'classic') => "fa-{$style} fa-{$id}",
@@ -45,10 +63,8 @@ abstract class AbstractFontAwesome implements FontAwesome
         };
     }
 
-    protected function customIconClass(string $name, array $pathData): string
+    protected function customIconClass(string $id, bool $duotone): string
     {
-        return count($pathData) === 1
-            ? "fa-kit fa-{$name}"
-            : "fa-kit-duotone fa-{$name}";
+        return $duotone ? "fa-kit-duotone fa-{$id}" : "fa-kit fa-{$id}";
     }
 }
