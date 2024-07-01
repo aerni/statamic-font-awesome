@@ -57,7 +57,7 @@ export default {
     },
 
     mounted() {
-        this.loadFontAwesomeScript();
+        this.meta.script ? this.loadFontAwesomeScript() : this.loadFontAwesomeCss()
     },
 
     computed: {
@@ -83,13 +83,15 @@ export default {
             return this.icons.find(icon => icon.class === this.value);
         },
 
-        fontAwesomeScriptIsLoaded() {
-            let scripts = Array.from(document.getElementsByTagName("script"))
-                .filter(script => script.src === this.meta.script)
-                .length
+        fontAwesomeIsLoaded() {
+            const elements = this.meta.script
+                ? Array.from(document.getElementsByTagName("script"))
+                    .filter(script => script.src === this.meta.script)
+                : Array.from(document.getElementsByTagName("link"))
+                    .filter(link => link.href === this.meta.css)
 
-            return scripts ? true : false;
-        }
+            return elements.length
+        },
     },
 
     methods: {
@@ -144,12 +146,21 @@ export default {
         },
 
         loadFontAwesomeScript() {
-            if (! this.fontAwesomeScriptIsLoaded) {
-                let externalScript = document.createElement('script')
-                externalScript.setAttribute('src', this.meta.script)
-                document.head.appendChild(externalScript)
-            }
-        }
+            if (this.fontAwesomeIsLoaded) return
+
+            let externalScript = document.createElement('script')
+            externalScript.setAttribute('src', this.meta.script)
+            document.head.appendChild(externalScript)
+        },
+
+        loadFontAwesomeCss() {
+            if (this.fontAwesomeIsLoaded) return
+
+            let link = document.createElement('link')
+            link.setAttribute('rel', 'stylesheet')
+            link.setAttribute('href', this.meta.css)
+            document.head.appendChild(link)
+        },
     },
 }
 </script>

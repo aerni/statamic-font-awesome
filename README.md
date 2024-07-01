@@ -1,16 +1,7 @@
 ![Statamic](https://flat.badgen.net/badge/Statamic/5.0+/FF269E) ![Packagist version](https://flat.badgen.net/packagist/v/aerni/font-awesome/latest) ![Packagist Total Downloads](https://flat.badgen.net/packagist/dt/aerni/font-awesome)
 
 # Font Awesome
-This Statamic addon adds a Fieldtype to easily search and select Font Awesome icons. It also comes with a Tag to output selected icons in your template. It supports Font Awesome version `5.x` and `6.x`.
-
-## Prerequisites
-To use this addon, you need a Font Awesome account. [Register here](https://fontawesome.com/start) if you don't already have one.
-
-### API Token
-You need to get your API Token. You can [generate one here](https://fontawesome.com/account).
-
-### Kit Token
-You also need to get the Token of the Kit you want to use. You can [create a Kit here](https://fontawesome.com/kits). The Kit Token is the number of the Kit, e.g. `f481b75381`.
+This Statamic addon features an icon fieldtype to browse and select Font Awesome 6.x icons. It also comes with a Tag to output selected icons in your template.
 
 ## Installation
 Install the addon using Composer:
@@ -25,62 +16,57 @@ You may publish the config of the package:
 php please vendor:publish --tag=font-awesome-config
 ```
 
-The following config will be published to `config/font-awesome.php`:
+## Configuration
+You may choose between using a Kit or hosting Font Awesome yourself.
+
+### Kit Driver
+If you want to use a Kit, make sure you set the `driver` option in the config to `kit`:
 
 ```php
-return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | API Token
-    |--------------------------------------------------------------------------
-    |
-    | You can get your API Token in your Font Awesome Account Details.
-    |
-    */
-
-    'api_token' => env('FA_API_TOKEN'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Kit Token
-    |--------------------------------------------------------------------------
-    |
-    | The Token of the Kit you want to use, e.g. b121fed549.
-    |
-    */
-
-    'kit_token' => env('FA_KIT_TOKEN'),
-
-];
+'driver' => 'kit'
 ```
 
-## Configuration
-Add your `API Token` and `Kit Token` to your `.env` file:
+Next, add your `API Token` and `Kit Token` to your `.env` file:
 
 ```env
 FA_API_TOKEN=************************************
 FA_KIT_TOKEN=************************************
 ```
 
+### Local Driver
+If you would rather host Font Awesome yourself, you may use the `local` driver:
+
+```php
+'driver' => 'local'
+```
+
+Next, download [Font Awesome (For The Web)](https://fontawesome.com/download) and place the `metadata` and `css` directories in the locations defined in the config:
+
+```php
+'local' => [
+    'metadata' => resource_path('fonts/fontawesome/metadata'),
+    'css' => '/fonts/fontawesome/css/all.min.css',
+],
+```
+
+#### Metadata
+The files in the `metadata` directory are required to get the information about the icons. I recommend placing the metadata in the `resources` directory, as these files don't need to be publicly accessible. 
+
+#### CSS
+The `css` config option defines the public path to the stylesheet that will be loaded in the Control Panel. The stylesheet must be placed in the `public` directory. The CSS will only be loaded in the Control Panel. You still need to add the stylesheet to your frontend layout yourself.
+
 ## Usage
 
 ### Fieldtype
 
-Add the `Font Awesome` Fieldtype to a Blueprint or Fieldset. The Fieldtype provides the option to only make certain icon styles available for selection.
+Add the `Font Awesome` Fieldtype to a Blueprint or Fieldset. The Fieldtype provides a config option that allows you to make only certain icon styles available for selection.
 
 ### Tag
 
-Add the following Tag to the `<head>` of your layout view to render the Font Awesome script.
+If you're using the `kit` driver, add the following Tag to your layout's `<head>` to render the Font Awesome script.
 
 ```antlers
 {{ font_awesome:kit }}
-```
-
-You may use a different Kit for rendering the icons in your template using the `token` parameter.
-
-```antlers
-{{ font_awesome:kit token="f481b75381" }}
 ```
 
 Render an icon by using the handle of a Font Awesome field as the wildcard method.
@@ -96,8 +82,6 @@ You may also use the shorter tag alias instead.
 
 {{ fa:icon_field }}
 ```
-
-
 
 ## Credits
 Developed by [Michael Aerni](https://www.michaelaerni.ch)

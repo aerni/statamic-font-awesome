@@ -1,14 +1,15 @@
 <?php
 
-namespace Aerni\FontAwesome;
+namespace Aerni\FontAwesome\Tags;
 
-use Facades\Aerni\FontAwesome\FontAwesome;
+use Aerni\FontAwesome\Facades\FontAwesome;
 use Statamic\Fields\Value;
 use Statamic\Tags\Tags;
 
 class FontAwesomeTags extends Tags
 {
     protected static $handle = 'font_awesome';
+
     protected static $aliases = ['fa'];
 
     public function wildcard($icon): ?string
@@ -20,9 +21,13 @@ class FontAwesomeTags extends Tags
 
     public function kit(): string
     {
-        $kitUrl = FontAwesome::kit($this->params->get('token'))->get('url');
+        if (FontAwesome::isUsingLocalDriver()) {
+            throw new \Exception('The kit tag is not available when using the local driver.');
+        }
 
-        return "<script defer src='$kitUrl' crossorigin='anonymous'></script>";
+        $kitUrl = FontAwesome::script();
+
+        return "<script defer src='{$kitUrl}' crossorigin='anonymous'></script>";
     }
 
     protected function output(Value $icon): string

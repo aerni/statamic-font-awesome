@@ -1,15 +1,16 @@
 <?php
 
-namespace Aerni\FontAwesome;
+namespace Aerni\FontAwesome\Fieldtypes;
 
-use Facades\Aerni\FontAwesome\FontAwesome;
-use Illuminate\Support\Str;
+use Aerni\FontAwesome\Facades\FontAwesome;
 use Statamic\Fields\Fieldtype;
 
 class FontAwesomeFieldtype extends Fieldtype
 {
     protected static $handle = 'font_awesome';
+
     protected $categories = ['media'];
+
     protected $icon = 'icon_picker';
 
     protected function configFieldItems(): array
@@ -24,7 +25,7 @@ class FontAwesomeFieldtype extends Fieldtype
                         'type' => 'select',
                         'multiple' => 'true',
                         'options' => FontAwesome::styles()->mapWithKeys(function ($style) {
-                            return [$style => __(Str::of($style)->replace('-', ' ')->title()->toString())];
+                            return [$style => __(str($style)->title()->replace('-', ' ')->toString())];
                         }),
                     ],
                 ],
@@ -36,7 +37,8 @@ class FontAwesomeFieldtype extends Fieldtype
     {
         return [
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
-            'script' => FontAwesome::kit()->get('url'),
+            'script' => ! FontAwesome::isUsingLocalDriver() ? FontAwesome::script() : null,
+            'css' => FontAwesome::isUsingLocalDriver() ? FontAwesome::css() : null,
         ];
     }
 }
