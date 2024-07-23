@@ -13,7 +13,7 @@ Statamic.$store.registerModule(['publish', 'fontAwesome'], {
     actions: {
         fetchIcons({ commit }) {
             return Statamic.$request.get(`/!/font-awesome/icons`)
-                .then(response => commit('setIcons', response.data))
+                .then(response => commit('setIcons', Object.values(response.data)))
                 .catch(function (error) {
                     console.log(error);
                 });
