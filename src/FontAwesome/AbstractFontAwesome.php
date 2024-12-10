@@ -41,7 +41,7 @@ abstract class AbstractFontAwesome implements FontAwesome
     {
         return match (true) {
             ($family === 'classic') => "fa-{$style} fa-{$id}",
-            ($family === 'duotone') => "fa-duotone fa-{$id}",
+            ($family === 'duotone') => "fa-duotone fa-{$style} fa-{$id}",
             ($family === 'kit') => "fa-kit fa-{$id}",
             ($family === 'kit-duotone') => "fa-kit-duotone fa-{$id}",
             default => "fa-{$family} fa-{$style} fa-{$id}",
