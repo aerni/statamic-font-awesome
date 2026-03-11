@@ -1,4 +1,4 @@
-![Statamic](https://flat.badgen.net/badge/Statamic/5.0+/FF269E) ![Packagist version](https://flat.badgen.net/packagist/v/aerni/font-awesome/latest) ![Packagist Total Downloads](https://flat.badgen.net/packagist/dt/aerni/font-awesome)
+![Statamic](https://flat.badgen.net/badge/Statamic/6.0+/FF269E) ![Packagist version](https://flat.badgen.net/packagist/v/aerni/font-awesome/latest) ![Packagist Total Downloads](https://flat.badgen.net/packagist/dt/aerni/font-awesome)
 
 # Font Awesome
 This Statamic addon features an icon fieldtype to browse and select Font Awesome 6.x icons. It also comes with a Tag to output selected icons in your template.
@@ -8,6 +8,12 @@ Install the addon using Composer:
 
 ```bash
 composer require aerni/font-awesome
+```
+
+After installation, publish the assets:
+
+```bash
+php artisan vendor:publish --tag=font-awesome --force
 ```
 
 You may publish the config of the package:
@@ -50,7 +56,7 @@ Next, download [Font Awesome (For The Web)](https://fontawesome.com/download) an
 ```
 
 #### Metadata
-The files in the `metadata` directory are required to get the information about the icons. I recommend placing the metadata in the `resources` directory, as these files don't need to be publicly accessible. 
+The files in the `metadata` directory are required to get the information about the icons. I recommend placing the metadata in the `resources` directory, as these files don't need to be publicly accessible.
 
 #### CSS
 The `css` config option defines the public path to the stylesheet that will be loaded in the Control Panel. The stylesheet must be placed in the `public` directory. The CSS will only be loaded in the Control Panel. You still need to add the stylesheet to your frontend layout yourself.

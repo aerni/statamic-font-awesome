@@ -11,7 +11,9 @@ class FontAwesomeFieldtype extends Fieldtype
 
     protected $categories = ['media'];
 
-    protected $icon = 'icon_picker';
+    protected $icon = 'fieldtype-icon_picker';
+
+    protected $keywords = ['icon'];
 
     protected function configFieldItems(): array
     {
@@ -36,6 +38,7 @@ class FontAwesomeFieldtype extends Fieldtype
     public function preload(): array
     {
         return [
+            'url' => cp_route('font-awesome.icons'),
             'styles' => $this->config('styles') ?? FontAwesome::styles(),
             'script' => ! FontAwesome::isUsingLocalDriver() ? FontAwesome::script() : null,
             'css' => FontAwesome::isUsingLocalDriver() ? FontAwesome::css() : null,

@@ -1,29 +1,20 @@
-Statamic.$store.registerModule(['publish', 'fontAwesome'], {
-
-    namespaced: true,
-
-    state: {
+export const useFontAwesomeStore = Statamic.$pinia.defineStore('fontAwesome', {
+    state: () => ({
         icons: null,
-    },
-
-    getters: {
-        icons: state => state.icons,
-    },
+        loading: false,
+    }),
 
     actions: {
-        fetchIcons({ commit }) {
-            return Statamic.$request.get(`/!/font-awesome/icons`)
-                .then(response => commit('setIcons', Object.values(response.data)))
-                .catch(function (error) {
-                    console.log(error);
-                });
+        fetchIcons(url) {
+            if (this.icons || this.loading) return Promise.resolve();
+
+            this.loading = true;
+
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => this.icons = Object.values(data))
+                .catch(error => console.error('Failed to fetch Font Awesome icons:', error))
+                .finally(() => this.loading = false);
         },
     },
-
-    mutations: {
-        setIcons(state, icons) {
-            state.icons = icons;
-        },
-    }
-
 })
