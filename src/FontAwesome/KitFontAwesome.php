@@ -13,21 +13,40 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
     protected string $apiEndpoint = 'https://api.fontawesome.com';
 
+    protected ?Icons $cachedIcons = null;
+
     public function __construct(protected string $apiToken, protected string $kitToken)
     {
         //
     }
 
+    public function iconCacheKey(): string
+    {
+        return $this->kitToken;
+    }
+
     public function icons(): Icons
     {
-        return Cache::rememberForever('font_awesome::kit::icons', function () {
-            $icons = Http::post($this->apiEndpoint, ['query' => $this->iconsQuery()])
-                ->collect('data.release.icons')
-                ->merge($this->customIcons())
-                ->toArray();
+        if ($this->cachedIcons) {
+            return $this->cachedIcons;
+        }
 
-            return $this->collectIcons($icons);
-        });
+        $cached = $this->readIconCache($this->kitToken);
+
+        if ($cached !== null) {
+            return $this->cachedIcons = $this->iconsFromArray($cached);
+        }
+
+        $iconsData = Http::post($this->apiEndpoint, ['query' => $this->iconsQuery()])
+            ->collect('data.release.icons')
+            ->merge($this->customIcons())
+            ->toArray();
+
+        $this->cachedIcons = $this->collectIcons($iconsData);
+        unset($iconsData);
+        $this->writeIconCache($this->kitToken, $this->cachedIcons);
+
+        return $this->cachedIcons;
     }
 
     protected function customIcons(): Collection
@@ -55,19 +74,23 @@ class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
 
     protected function kit(): Kit
     {
-        return Cache::rememberForever("font_awesome::kit::{$this->kitToken}", function () {
-            $kit = Http::withToken($this->authToken())
+        $kitData = $this->readKitCache($this->kitToken);
+
+        if ($kitData === null) {
+            $kitData = Http::withToken($this->authToken())
                 ->post($this->apiEndpoint, ['query' => $this->kitQuery()])
                 ->json('data.me.kit');
 
-            return new Kit(
-                id: $kit['token'],
-                url: "https://kit.fontawesome.com/{$kit['token']}.js",
-                license: $kit['licenseSelected'],
-                version: $kit['version'],
-                customIcons: $kit['iconUploads'],
-            );
-        });
+            $this->writeKitCache($this->kitToken, $kitData);
+        }
+
+        return new Kit(
+            id: $kitData['token'],
+            url: "https://kit.fontawesome.com/{$kitData['token']}.js",
+            license: $kitData['licenseSelected'],
+            version: $kitData['version'],
+            customIcons: $kitData['iconUploads'],
+        );
     }
 
     protected function authToken(): string

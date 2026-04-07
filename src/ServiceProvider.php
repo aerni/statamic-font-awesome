@@ -3,6 +3,8 @@
 namespace Aerni\FontAwesome;
 
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\Contracts\GraphQL\ResponseCache;
+use Aerni\FontAwesome\GraphQL\SafeResponseCache;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -12,4 +14,11 @@ class ServiceProvider extends AddonServiceProvider
         ],
         'publicDirectory' => 'resources/dist',
     ];
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        $this->app->bind(ResponseCache::class, SafeResponseCache::class);
+    }
 }

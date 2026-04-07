@@ -13,4 +13,6 @@ interface FontAwesome
     public function icon(string $id): ?Icon;
 
     public function styles(): Collection;
+
+    public function iconsCachePath(): ?string;
 }

@@ -4,29 +4,47 @@ namespace Aerni\FontAwesome\FontAwesome;
 
 use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icons;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Statamic\Facades\YAML;
 
 class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
 {
+    protected ?Icons $cachedIcons = null;
+
     public function __construct(protected string $metadata, protected string $css)
     {
         //
     }
 
+    public function iconCacheKey(): string
+    {
+        return 'local';
+    }
+
     public function icons(): Icons
     {
-        return Cache::rememberForever('font_awesome::local::icons', function () {
-            $icons = YAML::file("{$this->metadata}/icon-families.yml")->parse();
+        if ($this->cachedIcons) {
+            return $this->cachedIcons;
+        }
 
-            foreach ($icons as $id => $icon) {
-                $icons[$id]['id'] = $id; /* Make sure we have an ID to work with. */
-                $icons[$id]['label'] = Str::title($icon['label']); /* Ensure custom icons also use title case. */
-            }
+        $cached = $this->readIconCache('local');
 
-            return $this->collectIcons($icons);
-        });
+        if ($cached !== null) {
+            return $this->cachedIcons = $this->iconsFromArray($cached);
+        }
+
+        $icons = YAML::file("{$this->metadata}/icon-families.yml")->parse();
+
+        foreach ($icons as $id => $icon) {
+            $icons[$id]['id'] = $id;
+            $icons[$id]['label'] = Str::title($icon['label']);
+        }
+
+        $this->cachedIcons = $this->collectIcons($icons);
+        unset($icons);
+        $this->writeIconCache('local', $this->cachedIcons);
+
+        return $this->cachedIcons;
     }
 
     public function css(): string

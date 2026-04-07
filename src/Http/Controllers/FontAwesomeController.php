@@ -9,6 +9,12 @@ class FontAwesomeController extends Controller
 {
     public function __invoke()
     {
+        $cachePath = FontAwesome::iconsCachePath();
+
+        if ($cachePath !== null) {
+            return response()->file($cachePath);
+        }
+
         return response()->json(FontAwesome::icons());
     }
 }
