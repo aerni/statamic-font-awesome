@@ -20,7 +20,7 @@
 
         <template #selected-option="{ option: icon }">
             <div class="flex items-center gap-4">
-                <i class="w-5 h-5" :class="icon.class" />
+                <i class="w-5 h-5" :class="icon.value" />
                 <span class="text-xs truncate">{{ icon.label }}</span>
             </div>
         </template>
