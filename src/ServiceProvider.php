@@ -2,6 +2,9 @@
 
 namespace Aerni\FontAwesome;
 
+use Aerni\FontAwesome\Data\Icon;
+use Aerni\FontAwesome\Data\Icons;
+use Aerni\FontAwesome\Data\Kit;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
@@ -12,4 +15,13 @@ class ServiceProvider extends AddonServiceProvider
         ],
         'publicDirectory' => 'resources/dist',
     ];
+
+    public function register(): void
+    {
+        $this->registerSerializableClasses([
+            Icon::class,
+            Icons::class,
+            Kit::class,
+        ]);
+    }
 }
