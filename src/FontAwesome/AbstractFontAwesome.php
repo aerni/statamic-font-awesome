@@ -6,6 +6,7 @@ use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icon;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 abstract class AbstractFontAwesome implements FontAwesome
 {
@@ -18,7 +19,7 @@ abstract class AbstractFontAwesome implements FontAwesome
 
     public function styles(): Collection
     {
-        return $this->icons()->styles();
+        return Cache::rememberForever('font_awesome::styles', fn () => $this->icons()->styles());
     }
 
     protected function collectIcons(array $icons): Icons

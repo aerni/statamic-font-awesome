@@ -2,13 +2,12 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icons;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Statamic\Facades\YAML;
 
-class LocalFontAwesome extends AbstractFontAwesome implements FontAwesome
+class LocalFontAwesome extends AbstractFontAwesome
 {
     public function __construct(protected string $metadata, protected string $css)
     {
