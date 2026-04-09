@@ -2,14 +2,13 @@
 
 namespace Aerni\FontAwesome\FontAwesome;
 
-use Aerni\FontAwesome\Contracts\FontAwesome;
 use Aerni\FontAwesome\Data\Icons;
 use Aerni\FontAwesome\Data\Kit;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-class KitFontAwesome extends AbstractFontAwesome implements FontAwesome
+class KitFontAwesome extends AbstractFontAwesome
 {
     protected string $apiEndpoint = 'https://api.fontawesome.com';
 
