@@ -58,7 +58,16 @@ const icons = computed(() => {
     return iconsByStyle;
 });
 
-const visibleIcons = computed(() => icons.value.slice(0, limit.value));
+const visibleIcons = computed(() => {
+    const visible = icons.value.slice(0, limit.value);
+
+    if (!viewport && props.value && !visible.find((i) => i.class === props.value)) {
+        const selected = icons.value.find((i) => i.class === props.value);
+        if (selected) visible.push(selected);
+    }
+
+    return visible;
+});
 
 const fontAwesomeIsLoaded = computed(() => {
     const elements = props.meta.script
